@@ -9,6 +9,7 @@ format <- 'https://www.gov.uk/search/news-and-communications?keywords=cost+of+li
 nums <- 2:10 ##this is just a demo mention timeouts
 #nums <- 2:632 #uncomment this later
 pages <- paste0(format, nums)
+
 pages <- c(page1, pages)
 
 # Have a look at the beginning of the list
