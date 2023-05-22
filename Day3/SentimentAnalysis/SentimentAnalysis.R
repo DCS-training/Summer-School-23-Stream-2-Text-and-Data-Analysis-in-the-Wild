@@ -49,8 +49,10 @@ ByMonthYear<-LongPlot%>%
 
 # Make a ggplot, but add frame=year: one image per year
 ggplot(ByMonthYear, aes(x=Sentiment, y=count, fill=Sentiment)) +
-  geom_bar(stat='identity') +
+  geom_bar(stat='identity', colour="black") +
   theme_bw() +
+  coord_flip()+
+  geom_text(aes(label = count, hjust=0))+
   # gganimate specific bits:
   transition_states(
     MonthYear,
