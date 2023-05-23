@@ -11,4 +11,5 @@ install.packages("wordcloud")
 install.packages("gganimate")
 install.packages("gifski")
 install.packages("av")
+install.packages("textstem")
 
