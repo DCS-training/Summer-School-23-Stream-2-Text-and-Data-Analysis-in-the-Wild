@@ -1,20 +1,37 @@
 library(tidyverse)
 library(rvest)
+# The first thing we need to do is observe how the website is organised. In order to see easier the HTML tags on the page you can download the selector gadget extension to add to your browser
+
+browseURL("https://chrome.google.com/webstore/detail/selectorgadget/mhjhnkcfbdhnjickkkdbjoemdmbfginb")
+
+# Once we have that installed let's have a look to the news homepage 
+browseURL("https://www.gov.uk/search/news-and-communications")
+
+# We see that there is a search bar and we are going to use it to pull only the relevant news items using the keyword "Cost of living". 
+
+# Note how by searching with the keyword the address of the page and that is what we are going to use so we copy and paste that below to create the nesting of the pages we want to scrape
+
+# If we scroll to the bottom of the page we see there are multiple pages results let's see how the address for the second page looks like 
+
+# note that it looks the same with the addition of &page = 2 etc.. so we need to map this in order to be able to scrape all pages results
 
 # The first page
-page1 <- 'https://www.gov.uk/search/news-and-communications?keywords=cost%20of%20living&order=relevance'
-# The first part of the urls
-format <- 'https://www.gov.uk/search/news-and-communications?keywords=cost+of+living&order=relevance&page='
-# the numbers for the rest of the pages (here we are using a sample so it's more managable later on)
-nums <- 2:10 ##this is just a demo mention timeouts
-#nums <- 2:632 #uncomment this later
-pages <- paste0(format, nums)
+page1 <- 'https://www.gov.uk/search/news-and-communications?keywords=cost%20of%20living%20&order=relevance' # Define a new object with the website link for the first page 
 
-pages <- c(page1, pages)
+# The first part of the urls for all the other pages results
+format <- 'https://www.gov.uk/search/news-and-communications?keywords=cost+of+living&order=relevance&page='
+
+# the numbers for the rest of the pages (here we are using a sample so it's more managable later on)
+nums <- 2:15 ##this is just a demo to not scrape too many pages 
+#nums <- 2:500 #uncomment this later if you want to scrape more 
+pages <- paste0(format, nums)#  we now have a chr vector with the start of each page of the results (well the second to 15 pages)
+
+pages <- c(page1, pages) # We add the first page 
 
 # Have a look at the beginning of the list
 head(pages)
 
+# Now we need to start building the function to extract the info from this pages we can use selector gadget to help us identify the right html node 
 get.article.links <- function(x){
   links <- read_html(x) %>%
     html_nodes('.gem-c-document-list__item-title.govuk-link') %>%
@@ -22,7 +39,7 @@ get.article.links <- function(x){
 }
 
 
-ArticleLinks <- map(pages, get.article.links)#Create a list of the first 200 Articles
+ArticleLinks <- map(pages, get.article.links)#Create a list of the first 300 Articles
 
 head(ArticleLinks) #look at the top of it
 
@@ -34,7 +51,7 @@ ArticleLinksFlat <- ArticleLinks %>%
 head(ArticleLinksFlat) #look at the top of it
 
 
-# As we can see, 'https://www.gov.scot' is excluded from our links above, so just need to append each link with it.
+# As we can see, 'https://www.gov.uk' is excluded from our links above, so just need to append each link with it.
 
 base <- 'https://www.gov.uk'
 
@@ -48,6 +65,10 @@ length(ArticleLinksFlat)
 # See what one entry looks like
 ArticleLinksFlat[100]
 
+# Now that we have the list of link we need to extract titles content and dates
+
+# Again first of all we subset to make sure we are not going to be timed out
+
 # Create test set of links that will select only the first 5 links
 test <- head(ArticleLinksFlat)
 test
@@ -60,10 +81,10 @@ get.title <- function(x){
 }
 
 # Test the function
-ArticlesTest <- map(test, get.title)
+ArticlesTest <- map(test, get.title)# This will actually do the scraping bit
 
 # Run the test
-ArticlesTest
+ArticlesTest # looks fine now let's look at dates
 
 
 #Because the date is store together with other info we need to work in steps to get the date 
@@ -74,7 +95,8 @@ second_element <- function(x){
   
   out <- x[2]
   
-}# Square bracket are used to select by position. Remember that R start counting from 1 not from 0
+}
+# Square bracket are used to select by position. Remember that R start counting from 1 not from 0
 
 # Now we can write a function to get the dates
 
@@ -95,56 +117,65 @@ get.date <- function(x){
 }
 
 
-DatesTest <-map(test, get.date)
+DatesTest <-map(test, get.date)# Again let's scrape the first ones so that we can check 
 
 
-# Write a function to get the text
+# Write a function to get the text of the article 
 get.text <- function(x){
   body <- read_html(x) %>%
     html_node('.gem-c-govspeak') %>%
     html_text()
 }
 
-
-# Link them together
-map(test, get.date)
+# Test the function
 map(test, get.text)
 
 # Now that we know they work, time to apply them to the full data set. It is always a good idea to start small identify the right tag and then process the whole dataset 
 
 # Note that a big issue with web scraping is that we can get blocked if we scrape too quickly, since websites take measures against people who access them too frequently. 
 
-texts <- map(ArticleLinksFlat, get.text)#Get all the texts from the list of links
+texts <- map(ArticleLinksFlat, get.text)#Get all the texts from the list of links for the first 300 articles
 
-dates <- map(ArticleLinksFlat, get.date)#Get all the dates from the list of links
+dates <- map(ArticleLinksFlat, get.date)#Get all the dates from the list of links for the first 300 articles
 
-titles <- map(ArticleLinksFlat, get.title)#Get all the titles from the list of links
+titles <- map(ArticleLinksFlat, get.title)#Get all the titles from the list of links for the first 300 articles
 
-#Clean the Text because each Gov.uk Article contains a Further information section that is not present in the Scottish Gov 
+#Clean the Text because each Gov.uk Articles contains a Further information section that is not present in the Scottish Gov 
 # extract text up to the word "Further information"
 
 
 # Remove text after "Further information"
-clean_text <- sub(MyRegex, "", texts)
-
+# Generate the Regex function to remove anything past further info
 MyRegex<-"(?i)\n(further|more|additional)\\s+information.*$"
 
+clean_text <- sub(MyRegex, "", texts)
 
+# Now we can finally bring them together in a dataframe 
 UKNews<- as.data.frame(cbind(dates,titles, clean_text))
 UKNews$clean_text <-unlist(UKNews$clean_text)# transform texts from list to vector
 UKNews$dates <-unlist(UKNews$dates)# transform dates from list to vector
 UKNews$titles <-unlist(UKNews$titles)# transform titles from list to vector
 UKNews$dates<-as.Date(UKNews$dates, format = "%d %B %Y")# make sure the date is encoded as date (https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/as.Date)
 
+# Cost of Living is not a new concept so although is likely that most of the article we scraped are from the last couple of years let's subset out data-set to make sure all of them are connected to the ongoing issue
 
-write.csv(UKNews, "UKNews.csv")
+UkNewsLat3Years<- subset(UKNews, dates >= "2020-01-01") 
+# now we have only 222 let's round to 200
+UkNewsLat3Years<-UkNewsLat3Years %>% 
+  arrange(desc(dates)) %>% #order by the latest dates
+  slice(1:200)# Select the most recent 200 articles
+
+#Export the file created 
+write.csv(UkNewsLat3Years, "Day1/WebScraping/outputs/UKNews.csv")
+
+# Now we do the same for the Scotland News ======================
 
 # The first page
 page1 <- 'https://www.gov.scot/news/'
 # The first part of the urls
 format <- 'https://www.gov.scot/news/?term=cost%20of%20living&cat=filter&page='
 # the numbers for the rest of the pages (here we are using a sample so it's more managable later on)
-nums <- 2:10 ##this is just a demo mention timeouts
+nums <- 2:30 ##this is just a demo mention timeouts. To get the same amount since in the scotland webpage is 10 per page 
 #nums <- 2:632 #uncomment this later
 pages <- paste0(format, nums)
 pages <- c(page1, pages)
@@ -229,13 +260,18 @@ dates <- map(ArticleLinksFlat, get.date)
 
 titles <- map(ArticleLinksFlat, get.title)
 
+#Bind it together
 ScotlandNews<- as.data.frame(cbind(texts,dates,titles))
 ScotlandNews$texts <-unlist(ScotlandNews$texts)# transform texts from list to vector
 ScotlandNews$dates <-unlist(ScotlandNews$dates)# transform dates from list to vector
 ScotlandNews$titles <-unlist(ScotlandNews$titles)# transform titles from list to vector
 ScotlandNews$dates<-as.Date(ScotlandNews$dates, format = "%d %B %Y %H:%M")# make sure the date is encoded as date (https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/as.Date)
 
-ScotlandNews
+# Cost of Living is not a new concept so although is likely that most of the article we scraped are from the last couple of years let's subset out data-set to make sure all of them are connected to the ongoing issue
 
+ScotlandNewsLat3Years<- subset(ScotlandNews, dates >= "2020-01-01") 
+# Just shy of 200 let's call it a win. It also tell us that there are more articles published on the UK government website that on the Scottish website in the same data frame. We are not going to do that cause we do not have time but it could be interesting to compare number of articles by month in Scotland and UK across the last three years 
 
+#Export the file created 
+write.csv(ScotlandNewsLat3Years, "Day1/WebScraping/outputs/ScotlandNews.csv")
 
