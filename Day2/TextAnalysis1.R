@@ -6,6 +6,7 @@ library(quanteda.textmodels)
 library(ggplot2)
 library(lexicon)
 library(tidyverse)
+library (tm)
 
 #load the Uk data
 uk_data <- read_csv("Day1/WebScraping/outputs/UKNews.csv")

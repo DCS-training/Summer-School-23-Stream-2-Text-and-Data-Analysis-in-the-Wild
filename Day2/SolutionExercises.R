@@ -10,6 +10,7 @@ SC_data<-SC_data[, 2:4]
 #examine the data 
 summary(SC_data)
 
+
 #Look at the text of our articles
 head(SC_data$texts)
 
@@ -53,6 +54,8 @@ article_tokens_SC <- tokens(article_text_SC,
 #remove tokens under 3 characters:
 article_tokens_SC <- tokens_select(article_tokens_SC, min_nchar = 3)
 
+
+Try <-data.frame(text = sapply(article_text_SC, as.character), stringsAsFactors = FALSE)
 
 #keyword search examples (using kwic aka "keyword in context")
 kwic(article_tokens_SC, "cost")
