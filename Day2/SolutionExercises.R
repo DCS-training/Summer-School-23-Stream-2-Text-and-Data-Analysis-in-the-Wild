@@ -24,7 +24,7 @@ SC_data_clean <- mutate_if(SC_data, #change if is character so titles and texts
 #which will insert only one space regardless whether the text contains \r\n, \n or \r.
 # We can use the same trick to uniform Scotland and Scottish. Spoiler alert there are a lot of these two words repeating 
 
-SC_data_clean <- mutate_if(SC_data, #change if is character so titles and texts
+SC_data_clean <- mutate_if(SC_data_clean, #change if is character so titles and texts
                            is.character, 
                            str_replace_all, 
                            pattern = "[Ss]cottish", #What I am searching
@@ -44,6 +44,46 @@ summary(article_text_SC, 5)
 ndoc(article_text_SC) #number of documents in the corpus
 nchar(article_text_SC[1:10]) #number of characters in the first 10 documents of the corpus
 ntoken(article_text_SC[1:10]) #number of tokens in the first 10 documents
+
+# Let see the same for all of them and save it as new vector and then create a new dataframe with three columns (Ntoken, Dataset, Date)
+NtokenSC<-as.vector(ntoken(article_text_SC))
+TokenSC <-data.frame(Tokens=NtokenSC, Dataset="Scotland", Date=SC_data_clean$dates)
+# The first thing we can do is look if there is an increase of number of articles and length of articles ---------------
+# First let's extract Year and Month from the dates 
+TokenSC$MonthYear <- format(as.Date(TokenSC$Date, format="%Y-%m-%d"),"%Y-%m")
+# Now we can group by Month Year and count both how many articles and total number of token/month 
+BreakoutSC<- TokenSC %>%
+  group_by(MonthYear,Dataset)%>%
+  summarize(NArticles=n(), MeanTokens=round(mean(Tokens)))
+# Now we can plot the trends
+ggplot(BreakoutSC, aes(x=MonthYear, y=NArticles))+ # Select data set and coordinates we are going to plot
+  geom_point(aes(size=MeanTokens, fill=MeanTokens),shape=21, stroke=1.5, alpha=0.9, colour="black")+ # Which graph I want 
+  labs(x = "Timeline", y = "Number of Articles", fill = "Mean of Tokens", size="Mean of Tokens", title="Number of Articles and Tokens in the UK Gov Website")+ # Rename labs and title
+  geom_path(aes(group=1), colour="black", size=1)+ # Add a line that will connect the dots 
+  scale_size_continuous(range = c(5, 15))+ # Resize the dots to be bigger
+  geom_text(aes(label=MeanTokens))+ # Add the mean of tokens in the dots
+  scale_fill_viridis_c(option = "plasma")+ # Change the colour coding
+  theme_bw()+ # B/W Background
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), legend.position = "bottom")+ # Rotate labels of x and move them slightly down. Plus move the position to the bottom 
+  guides(size = "none") # Remove the Size from the Legend 
+
+# Bring together the two breakout datasets
+TotBreakout <-rbind(BreakoutSC,BreakoutUK)
+
+# Now replot the two together
+ggplot(TotBreakout, aes(x=MonthYear, y=NArticles))+ # Select data set and coordinates we are going to plot
+  geom_point(aes(size=MeanTokens, fill=MeanTokens, colour=Dataset),shape=21, stroke=1.5, alpha=0.9)+ # Which graph I want 
+  labs(x = "Timeline", y = "Number of Articles", fill = "Mean of Tokens", size="Mean of Tokens", title="Number of Articles and Tokens in the Scotland and UK Gov Website")+ # Rename labs and title
+  geom_path(aes(group=1,colour=Dataset),  size=1)+ # Add a line that will connect the dots 
+  scale_size_continuous(range = c(5, 15))+ # Resize the dots to be bigger
+  geom_text(aes(label=MeanTokens))+ # Add the mean of tokens in the dots
+  scale_fill_viridis_c(option = "plasma")+ # Change the colour coding
+  theme_bw()+ # B/W Background
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), legend.position = "bottom")+ # Rotate labels of x and move them slightly down. Plus move the position to the bottom 
+  guides(size = "none")+# Remove the Size from the Legend 
+  facet_wrap(~Dataset, nrow=2)
+
+
 
 #tokenise the corpus 
 article_tokens_SC <- tokens(article_text_SC, 
