@@ -1,7 +1,6 @@
 # Exercise 1: Clean and Analyse the Scottish News  =============
 
 # Now we compare what we have found for the general UK with what we can find in the Scottish news. 
-
 # Load the Scotland data
 SC_data <- read_csv("Day1/WebScraping/outputs/ScotlandNews.csv")
 #Drop the first column that we do not need
@@ -9,6 +8,7 @@ SC_data<-SC_data[, 2:4]
 
 #examine the data 
 summary(SC_data)
+
 
 
 #Look at the text of our articles
@@ -58,7 +58,7 @@ BreakoutSC<- TokenSC %>%
 # Now we can plot the trends
 ggplot(BreakoutSC, aes(x=MonthYear, y=NArticles))+ # Select data set and coordinates we are going to plot
   geom_point(aes(size=MeanTokens, fill=MeanTokens),shape=21, stroke=1.5, alpha=0.9, colour="black")+ # Which graph I want 
-  labs(x = "Timeline", y = "Number of Articles", fill = "Mean of Tokens", size="Mean of Tokens", title="Number of Articles and Tokens in the UK Gov Website")+ # Rename labs and title
+  labs(x = "Timeline", y = "Number of Articles", fill = "Mean of Tokens", size="Mean of Tokens", title="Number of Articles and Tokens in the Scottish Gov Website")+ # Rename labs and title
   geom_path(aes(group=1), colour="black", size=1)+ # Add a line that will connect the dots 
   scale_size_continuous(range = c(5, 15))+ # Resize the dots to be bigger
   geom_text(aes(label=MeanTokens))+ # Add the mean of tokens in the dots
@@ -72,9 +72,9 @@ TotBreakout <-rbind(BreakoutSC,BreakoutUK)
 
 # Now replot the two together
 ggplot(TotBreakout, aes(x=MonthYear, y=NArticles))+ # Select data set and coordinates we are going to plot
-  geom_point(aes(size=MeanTokens, fill=MeanTokens, colour=Dataset),shape=21, stroke=1.5, alpha=0.9)+ # Which graph I want 
+  geom_point(aes(size=MeanTokens, fill=MeanTokens),shape=21, stroke=1.5, alpha=0.9, colour="black")+ # Which graph I want 
   labs(x = "Timeline", y = "Number of Articles", fill = "Mean of Tokens", size="Mean of Tokens", title="Number of Articles and Tokens in the Scotland and UK Gov Website")+ # Rename labs and title
-  geom_path(aes(group=1,colour=Dataset),  size=1)+ # Add a line that will connect the dots 
+  geom_path(aes(group=1),  size=1, colour="black")+ # Add a line that will connect the dots 
   scale_size_continuous(range = c(5, 15))+ # Resize the dots to be bigger
   geom_text(aes(label=MeanTokens))+ # Add the mean of tokens in the dots
   scale_fill_viridis_c(option = "plasma")+ # Change the colour coding

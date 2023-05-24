@@ -1,11 +1,12 @@
 ###############################################################
 # CDCS Summer School 2023
-# Text Analysis
+# Text Analysis Part 1
 # Tuesday, 6th June
 ###############################################################
 
 # Research Questions =========================
-# 1.Can we see a peak in the amount and lenght of articles on the cost of living in the last 3 years. Is this trend similar for both Scotland and general UK website
+# 1.Can we see a peak in the amount and length of articles on the cost of living in the last 3 years. Is this trend similar for both Scotland and general UK website
+# 2.Can we see a difference in the wording about the cost of living between Scottish and general UK governments websites?
 
 # Setting up ===================
 # Library needed

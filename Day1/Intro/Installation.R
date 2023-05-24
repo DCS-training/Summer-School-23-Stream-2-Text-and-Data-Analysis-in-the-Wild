@@ -12,4 +12,5 @@ install.packages("gganimate")
 install.packages("gifski")
 install.packages("av")
 install.packages("textstem")
+install.packages("topicmodels")
 
