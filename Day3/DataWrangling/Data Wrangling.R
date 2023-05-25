@@ -167,17 +167,22 @@ Merged_data <- merge(authority_data, Councils, by.x = 'authority', by.y = 'Counc
 
 # ==== This is in preparation for tomorrow ====================
 # On our dataset for each variable there are two value normally 2020 and 2022 so we want to analyse the increase and decrease. For some of the techniques we are going to look tomorrow it is better if they are all in the same scale so we will transform them all in % increase/ decrease 
-authority_data$FoodInsecurity <- round(((authority_data[,5]-authority_data[,4])/authority_data[,4])*100,2)    
-authority_data$HousePrices<- round(((authority_data[,7]-authority_data[,8])/authority_data[,8])*100,2) 
-authority_data$WelfareApp<-round(((authority_data[,10]-authority_data[,9])/authority_data[,9])*100,2)
-authority_data$Homeless<- round(((authority_data[,12]-authority_data[,11])/authority_data[,11])*100,2)
-authority_data$Business<- round(((authority_data[,16]-authority_data[,15])/authority_data[,15])*100,2)
-authority_data$Foodbank<-round(((authority_data[,18]-authority_data[,17])/authority_data[,17])*100,2)
-authority_data$Rent<-round(((authority_data[,19]-authority_data[,20])/authority_data[,20])*100,2)
+authority_data$FoodInsecurity <- round(((authority_data$food_insecurity2018_2022-authority_data$food_insecurity2017_2021)/authority_data$food_insecurity2017_2021)*100,2) 
 
-authority_data_cleaned<-authority_data[,c(1:3,6,13,14,21:28)]# Nice cleaned dataset for tomorrow
+authority_data$HousePrices<- round(((authority_data$house_price_jul_22-authority_data$house_price_jul_21)/authority_data$house_price_jul_21)*100,2) 
+authority_data$WelfareApp<-round(((authority_data$welfare_applications2021_2022-authority_data$welfare_applications2020_2021)/authority_data$welfare_applications2020_2021)*100,2) 
+
+authority_data$Homeless<- round(((authority_data$homelessness_applications2021_2022-authority_data$homelessness_applications2020_21)/authority_data$homelessness_applications2020_21)*100,2)
+
+authority_data$Business<- round(((authority_data$businesses_2022-authority_data$businesses_2021)/authority_data$businesses_2021)*100,2)
+
+authority_data$Foodbank<-round(((authority_data$foodbank_parcels_2022-authority_data$foodbank_parcels_2021)/authority_data$foodbank_parcels_2021)*100,2)
+
+authority_data$Rent<-round(((authority_data$average_rent_2022-authority_data$average_rent_2021)/authority_data$average_rent_2021)*100,2)
+
+authority_data_cleaned<-authority_data[,c(1:3,6,13,14,23:29)]# Nice cleaned dataset for tomorrow
 
 # Just to make sure we have it ready tomorrow let's save it as an output
-write_csv(authority_data_cleaned, "Day3/DataWrangling/outputs/authority_data_cleaned.csv")
+write_csv(authority_data_cleaned, "Day3/DataWrangling/outputs/authority_data_cleaned2.csv")
 
 
