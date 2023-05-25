@@ -5,8 +5,8 @@
 ###############################################################
 
 # Research Questions =========================
-# 1.Can we see a peak in the amount and length of articles on the cost of living in the last 3 years. Is this trend similar for both Scotland and general UK website
-# 2.Can we see a difference in the wording about the cost of living between Scottish and general UK governments websites?
+# 1.What can we observe about the number and length of articles on the cost of living in the last 3 years? How do the datasets compare?
+# 2.Can we see a difference in the wording about the cost of living between the datasets?
 
 # Setting up ===================
 # Library needed
@@ -20,13 +20,14 @@ library (tm)
 
 # Load the Uk data
 uk_data <- read_csv("Day1/WebScraping/outputs/UKNews.csv")
-# Drop the first column that we do not need
-uk_data<-uk_data[, 2:4]
 # Examine the data 
 summary(uk_data)
+# Drop the first column that we do not need
+uk_data<-uk_data[, 2:4]
+
 # Look at the text of our articles
 head(uk_data$clean_text)
-# There are a lot of formatting (next line, next paragraph) that we want to get read of 
+# There are a lot of formatting errors (next line, next paragraph) that we want to clean up
 uk_data_clean <- mutate_if(uk_data, #change if is character so titles and texts
                          is.character, 
                          str_replace_all, 
@@ -41,20 +42,21 @@ head(uk_data_clean$clean_text)
 article_text<-corpus(uk_data_clean, text_field='clean_text')
 
 # Some methods for extracting information about the corpus:
+# Print doc in position 5 of the corpus
 summary(article_text, 5)
-# Check how many doc are in the corpus
+# Check how many docs are in the corpus
 ndoc(article_text) 
 # Check number of characters in the first 10 documents of the corpus
 nchar(article_text[1:10]) 
 # Check number of tokens in the first 10 documents
 ntoken(article_text[1:10]) 
-# Let see the same for all of them and save it as new vector and then create a new dataframe with three columns (Ntoken, Dataset, Date)
+# Create a new vector with tokens for all articles and store the vector as a new dataframe with three columns (Ntoken, Dataset, Date)
 NtokenUK<-as.vector(ntoken(article_text))
 TokenUK <-data.frame(Tokens=NtokenUK, Dataset="UK", Date=uk_data_clean$dates)
-# The first thing we can do is look if there is an increase of number of articles and length of articles ---------------
-# First let's extract Year and Month from the dates 
+# Let's explore the number of articles published and their length to see if we can answer research question #1.
+# First, let's extract Year and Month from the dates 
 TokenUK$MonthYear <- format(as.Date(TokenUK$Date, format="%Y-%m-%d"),"%Y-%m")
-# Now we can group by Month Year and count both how many articles and total number of token/month 
+# Now we can group the data by Month/Year and, for each group, count 1) how many articles were published and 2) how many tokens they contained
 BreakoutUK<- TokenUK %>%
   group_by(MonthYear,Dataset)%>%
   summarize(NArticles=n(), MeanTokens=round(mean(Tokens)))
@@ -113,9 +115,9 @@ textplot_wordcloud(dfm_nostop, rotation = 0.25,
 # What observations do we have?
 
 
-# Add a remove custom stop words list 
+# We can also create a custom list of words to remove from the corpus:
 
-customstopwords <- c("cost", "living", "2023")#I just remove some of the keywords that are not really telling me much
+customstopwords <- c("cost", "living", "2023")#removed keywords that aren't telling us much
 
 dfm_nostop_cost <- dfm_remove(dfm_uk, c(stopwords('english'), customstopwords))
 topfeatures(dfm_nostop, 10)
@@ -139,7 +141,7 @@ lemma_dfm <- dfm(lemmas)
 topfeatures(stem_dfm, 20)
 topfeatures(lemma_dfm, 20)
 
-#what do you think about the results? what can we learn about how the computer "reads" in each example?
+#what can we observe about stemming and lemmatization? which method (if any) is better for answering our research questions, and why?
 
 #make a word cloud of the lemmatized results:
 textplot_wordcloud(lemma_dfm, rotation = 0.25,
@@ -159,7 +161,7 @@ data.frame(list(term = names(top_keys), frequency = unname(top_keys))) %>% # Cre
 
 # Now we compare what we have found for the general UK with what we can find in the Scottish news. Hint: Copy and paste the code we used so far below and adapt it to do the same steps in the Scottish Dataset 
 
-# Some help to start with 
+# To start:
 # Load the Scotland data
 SC_data <- read_csv("Day1/WebScraping/outputs/ScotlandNews.csv")
 #Drop the first column that we do not need
@@ -171,7 +173,7 @@ summary(SC_data)
 #Look at the text of our articles
 head(SC_data$texts)
 
-# There are a lot of formatting (next line, next paragraph) that we want to get read of 
+# Clean up the formatting annotations:
 
 SC_data_clean <- mutate_if(SC_data, #change if is character so titles and texts
                            is.character, 
@@ -179,31 +181,32 @@ SC_data_clean <- mutate_if(SC_data, #change if is character so titles and texts
                            pattern = "\r?\n|\r", #What I am searching
                            replacement = " ")#What I am replacing with
 
-# Which will insert only one space regardless whether the text contains \r\n, \n or \r.
-# We can use the same trick to uniform Scotland and Scottish. Spoiler alert there are a lot of these two words repeating 
+# Which will insert only one space regardless of whether the text contains \r\n, \n or \r.
+# We can use the same trick to standardise references to Scotland (including "Scottish") to "Scotland". Spoiler alert there are a lot of these two words repeating 
 
-SC_data_clean <- mutate_if(SC_data_clean, #change if is character so titles and texts
+SC_data_clean <- mutate_if(SC_data_clean,
                            is.character, 
                            str_replace_all, 
-                           pattern = "[Ss]cottish", #What I am searching
-                           replacement = "Scotland")#What I am replacing with
+                           pattern = "[Ss]cottish", #searches for upper and lowercase to account for typos
+                           replacement = "Scotland")#replace matches with "Scotland"
 
 
 
-# Let's check again 
+# Let's check the cleaned output:
 head(SC_data_clean$texts)
 
 #create a quanteda corpus of the 'article text' column from our data set:
 article_text_SC<-corpus(SC_data_clean, text_field='texts')
 
-# Now up to you when you are done compare the world clouds and the top-keys results between Scotland and UK and discuss what you see with your table
+#Wrap-up activity: comparisons & table discussion
+#1. Follow the steps from the first lesson to analyse the Scotland data. When you are finished, compare the world clouds and the top-keys results between the Scotland and UK datasets.
+#Discuss your findings with your table. 
 
+#2. Looking at top_keys with your table along with the word clouds we've made so far (hint: you can scroll through the plots using the arrows in the top left corner of the window),
+#what can keywords show us about a corpus? What do they not show us?
 
-#take a look at top_keys and discuss your thoughts about the object with your table.
+#3. Can we answer our research questions with the data we have? If not, what is still unknown? What information might we need to gather?
 
-#looking at the word clouds we've made so far (hint: you can scroll through the plots using the arrows in the top left corner of the window), 
-#what can we answer about our research question? what is still unknown?
-#what can keywords show us about a corpus? what can they not show us?
-#discuss with your tables the pros and cons of the methods we've covered so far
+#4.Discuss the pros and cons of the text mining methods we've covered so far.
 #bonus points for coming up with a potential use case in the context of your research!
 
