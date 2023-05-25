@@ -9,7 +9,7 @@
 # 2.Can we see a difference in the wording about the cost of living between the datasets?
 
 # Setting up ===================
-# Library needed
+# Load required libraries
 library(quanteda)
 library(quanteda.textplots)
 library(quanteda.textmodels)
