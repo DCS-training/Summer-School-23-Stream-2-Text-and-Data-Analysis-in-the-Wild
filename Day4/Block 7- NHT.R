@@ -1,9 +1,12 @@
-# #### Statistical Analysis ####
-# #### PART 1: Descriptive Statistics ####
+#############################################################
+################# Statistical Analysis ######################
+#############################################################
+
+##### PART 1: Descriptive Statistics ####
 
 library(tidyverse)
 
-Scot_data <- read_csv("Data/Full_Scottish_Data.csv")
+Scot_data <- read_csv("Day3/DataWrangling/outputs/Full_Scottish_Data.csv")
 
 # We can use descriptive statistics to get some basic information from our data.
 
@@ -14,15 +17,15 @@ mean(Scot_data$average_rent_2022)
 # This suggests rent is increasing.
 
 # median can be used in a similar way.
-median(Scot_data$`welfare_applications2020-2021`)
-median(Scot_data$`welfare_applications2021-2022`)
+median(Scot_data$welfare_applications2020_2021)
+median(Scot_data$welfare_applications2021_2022)
 
 # We can also just sum data if we want totals.
-sum(Scot_data$`homelessness_applications2021-21`)
-sum(Scot_data$`homelessness_applications 2021-2022`)
+sum(Scot_data$homelessness_applications2020_21)
+sum(Scot_data$homelessness_applications2021_2022)
 # This shows an increase in welfare and homelessness applications.
 
-# sd can be used to calulate the standard deviation ofa dataset. This can be helpful to udnerstand how different each observation is across the dataset.
+# sd can be used to calculate the standard deviation of data set. This can be helpful to understand how different each observation is across the data set.
 sd(Scot_data$average_energy_bill_2021) 
 mean(Scot_data$average_energy_bill_2021) # This is quite a small value compared to the mean, and so energy bills seem quite consistent across authorities.
 
@@ -33,49 +36,53 @@ summary_stats <- Scot_data %>%
   summarize(
     Mean_population = mean(Population),
     Median_SIMD = median(SIMD),
-    SD_Food_insc = sd(`food_insecurity2018-2022`)
+    SD_Food_insc = sd(food_insecurity2018_2022)
   )
 
 # Print the summary statistics
 print(summary_stats)
 
 
-# #### PART 2: Null Hypothesis Testing ####
-# We can use Null Hypothesis Testing (NHT) to try and reject the Null Hypothesis, this allows us to better udnerstand whether or not the results we are seeing are statistically significant, or might just be explained by random noise etc.
+# #### PART 2: Null Hypothesis Testing ############################
+# We can use Null Hypothesis Testing (NHT) to try and reject the Null Hypothesis, this allows us to better understand whether or not the results we are seeing are statistically significant, or might just be explained by random noise etc.
 
-# ==== Two Sample t.tests ====
+# ==== Two Sample t.tests ===================================
 # Let's test whether or not the increases we observed between 2021 and 2022.
 
 two_sample_ttest <- t.test(Scot_data$average_rent_2022, Scot_data$average_rent_2021)
 
 print(two_sample_ttest) # Our p value is significantly larger than 0.05, and so the Null Hypothesis cannot be rejected.
 
-# We can also use this to see if specific factors make a difference. For example, are energy bills significantly higher between urban and rural authorities.
+# We can also use this to see if specific factors make a difference. For example, is the increase in food insecurity significantly higher between urban and rural authorities.
 
-Rural <- subset(Scot_data, Scot_data$location =='Rural')
-Urban <- subset(Scot_data, Scot_data$location =='Urban')
+# In this case we want to use the dataset that contains the % of increase/decrease
 
-mean(Rural$average_energy_bill_2021)
-mean(Urban$average_energy_bill_2021)
+authority_data_cleaned<-read_csv("Day3/DataWrangling/outputs/authority_data_cleaned.csv")
 
-# Rural energy bills are higher on average. The Null Hypothesis is that the Urban and Rural distinction is not a significant factor in this increase. We can use a t.test to try and reject this Null Hypothesis.
-two_sample_ttest <- t.test(Rural$average_energy_bill_2021, Urban$average_energy_bill_2021)
+Rural <- subset(authority_data_cleaned, location =='Rural')
+Urban <- subset(authority_data_cleaned, location =='Urban')
 
-print(two_sample_ttest) # Again, we cannot reject the Null Hypothesis.
+mean(Rural$FoodInsecurity)
+mean(Urban$FoodInsecurity)
 
-# ---- Practical 1 ----
+# Rural Food insecurity decreased while the urban food insecurity increase. The Null Hypothesis is that the Urban and Rural distinction is not a significant factor in this pattern. We can use a t.test to try and reject this Null Hypothesis.
+two_sample_ttest <- t.test(Rural$FoodInsecurity, Urban$FoodInsecurity)
 
-# What about public transport journey times to a GP? Check the difference between transport times to a GP (PT_GP) between urban and rural authorities. Use a two sample t.test and determine whether or not the Null Hypothesis, that the Urban and Rural distinction is not a major factor, can be rejected.
+print(two_sample_ttest) # So even if the means are very different Again, we cannot reject the Null Hypothesis.
+
+# ---- Practical 1 ---------------------
+
+# What about homeless application? Check the difference in increase/decrease of homeless applications between urban and rural authorities. Use a two sample t.test and determine whether or not the Null Hypothesis, that the Urban and Rural distinction is not a major factor, can be rejected.
 
 # ==== One Sample t.tests ====
 # For one sample t.tests, we can test the mean of a population against a hypothetical mean.
 
-# In this case, we can test alcohol consumption between England and Scotland. The percentage of adults drinking more than 14 units a week in England is reported as 22.8% between 2015 and 2018 (browseURL("https://www.gov.uk/government/statistics/local-alcohol-profiles-for-england-lape-july-2021-update/local-alcohol-profiles-for-england-short-statistical-commentary-july-2021"))
+# In this case, we can test the raise of average rent costs in Scotland between 2021 and 2022 and the UK mean. The percentage of increase in rent across Uk between June 2021 and June 2022 has been of 9.5% (browseURL(https://www.haart.co.uk/landlords/landlord-advice/rent-increase-notices-what-is-a-fair-rent-increase/)) 
 
 # We can use this figure as a 'mu' value to run a one sample t.test.
-mean(Scot_data$Alcohol) # Alcohol consumption seems lower, but is this statistically significant?
+mean(authority_data_cleaned$Rent) # Rent raise seems lower, but is this statistically significant?
 
-t.test(Scot_data$Alcohol, mu = 0.228) # With a p value below 0.05, the Null Hypothesis can be rejected, and it seems there is a significant difference between alcohol consumption in England and Scotland (note these are imperfect data, with the Scottish sample being more recent).
+t.test(authority_data_cleaned$Rent, mu = 9.5) # With a p value below 0.05, the Null Hypothesis can be rejected, and it seems there is a significant difference between Scotland raise in rent and general UK one (note these are imperfect data, with the Scottish sample include the whole 2022).
 
 # ---- Practical 2 ----
 # Does deprivation have an impact on alcohol consumption? Check the most deprived 16 authorities alcohol consumption and see if it is significantly higher than the theoretical mean/mu value of 0.2 (rough rate of alcohol abuse across Scotland).
