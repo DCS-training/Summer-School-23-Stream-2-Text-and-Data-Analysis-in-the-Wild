@@ -183,6 +183,6 @@ authority_data$Rent<-round(((authority_data$average_rent_2022-authority_data$ave
 authority_data_cleaned<-authority_data[,c(1:3,6,13,14,23:29)]# Nice cleaned dataset for tomorrow
 
 # Just to make sure we have it ready tomorrow let's save it as an output
-write_csv(authority_data_cleaned, "Day3/DataWrangling/outputs/authority_data_cleaned2.csv")
+write_csv(authority_data_cleaned, "Day3/DataWrangling/outputs/authority_data_cleaned.csv")
 
-
+write_csv(Merged_data, "Day3/DataWrangling/outputs/Full_Scottish_Data.csv")
