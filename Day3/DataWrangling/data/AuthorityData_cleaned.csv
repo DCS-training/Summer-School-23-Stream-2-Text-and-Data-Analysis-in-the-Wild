@@ -1,0 +1,33 @@
+authority,location,region,FoodInsecurity,WelfareApp,Rent,Homeless
+Aberdeen City,Urban,north_east,25,-15.5,2.2,10.5
+Aberdeenshire,Rural,north_east,0,4.8,2.2,6
+Angus,Rural,east,-11.1,-5.2,7.8,1
+Argyll and Bute,Rural,highlands_islands,16.7,1.5,5,5.7
+City of Edinburgh,Urban,east,-14.3,-2.9,6.8,3.6
+Clackmannanshire,Urban,east,0,-4.8,8.6,33.3
+Dumfries and Galloway,Rural,south_west,-18.2,0.3,0.6,3
+Dundee City,Urban,east,-9.1,3.7,7.8,26.7
+East Ayrshire,Urban,south_west,0,4.5,-1.4,26
+East Dunbartonshire,Urban,south_west,0,-3.1,8.2,2.8
+East Lothian,Rural,east,0,9,6.8,5.4
+East Renfrewshire,Urban,south_west,0,3.4,5.6,41.5
+Falkirk,Urban,east,0,0.1,8.6,10.7
+Fife,Rural,east,0,1.2,5.4,3.9
+Glasgow City,Urban,south_west,0,1.8,7.7,4.8
+Highland,Rural,highlands_islands,-25,7.8,5.1,-12.9
+Inverclyde,Urban,south_west,12.5,-10.1,5.6,21.3
+Midlothian,Rural,east,12.5,2.5,6.8,-0.9
+Moray,Rural,highlands_islands,16.7,11.4,5.1,-3.6
+Na h-Eileanan an Iar,Rural,highlands_islands,0,2.3,5.1,23.3
+North Ayrshire,Rural,south_west,14.3,2.8,-1.4,5.5
+North Lanarkshire,Urban,south_west,-7.1,3.8,8.3,11.3
+Orkney Islands,Rural,highlands_islands,0,-4.4,5.1,-18
+Perth and Kinross,Rural,east,-16.7,-1.6,6.1,-8.1
+Renfrewshire,Urban,south_west,16.7,3.3,5.6,4.4
+Scottish Borders,Rural,east,0,-0.2,1.7,3.2
+Shetland Islands,Rural,highlands_islands,-16.7,2,5.1,4.5
+South Ayrshire,Rural,south_west,0,7.8,-1.4,9.7
+South Lanarkshire,Rural,south_west,0,3,10.3,3.1
+Stirling,Rural,east,0,2.2,8.6,3.6
+West Dunbartonshire,Urban,south_west,33.3,-2.8,8.4,1.5
+West Lothian,Urban,east,42.9,1.7,4.8,-11.9
