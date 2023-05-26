@@ -33,18 +33,21 @@ head(pages)
 
 # Now we need to start building the function to extract the info from this pages we can use selector gadget to help us identify the right html node 
 get.article.links <- function(x){
-  links <- read_html(x) %>%
-    html_nodes('.gem-c-document-list__item-title.govuk-link') %>%
-    html_attr('href')
+  links <- read_html(x) %>% # Reads the HTML of the page into the environment
+    html_nodes('.gem-c-document-list__item-title.govuk-link') %>% # Selects all instances of content matching a CSS selector
+    html_attr('href') # Specifies that we want the URL from this content
 }
 
-
-ArticleLinks <- map(pages, get.article.links)#Create a list of the first 300 Articles
+# Now map our function over the list of URLs to create a list of the first 300 Articles
+ArticleLinks <- map(pages, get.article.links)
 
 head(ArticleLinks) #look at the top of it
 
 # The solution is to address the second problem first, and then fix each of the urls
 
+# flatten() takes a nested list (a list of lists) and turns it into a single list, following the order of the original list
+# So if you have a list of lists of the names of students in classes, where the first entry is all the names of students in the first class, the second is the names of the students in the second class, etc,
+# flatten() will turn this into a list of students, starting from the first student in the first class, without the nesting
 ArticleLinksFlat <- ArticleLinks %>% 
   flatten()
 
