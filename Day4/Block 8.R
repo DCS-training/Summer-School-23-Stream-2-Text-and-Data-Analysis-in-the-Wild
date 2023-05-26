@@ -1,8 +1,8 @@
-
-#### Block 8 Code ####
+################################################################
+#                       Block 8 Code                              
+################################################################
 
 #### Packages ####
-
 library(ggdendro)
 library(tidyverse)
 library(ggplot2)
@@ -10,12 +10,19 @@ library(ggfortify)
 library(MASS)
 
 #### Import Dataset ####
-AuthorityData <- read_excel("AuthorityData.csv")
+authority_data_cleaned <- read_csv("Day3/DataWrangling/outputs/authority_data_cleaned.csv")
 
-#### Principle Component Analysis ####
+#### Principle Component Analysis ###############
+# We do not need all the variable let's create a new dataframe with only the one we want
+PCADataset<-authority_data_cleaned[,c(1:3,15,7:11,13)]
+PCADataset$SIMDQuint<-as.character(PCADataset$SIMDQuint)
 
-#### Selecting columns with numerical components (those 4-7) to make a new data frame ####
-measures <- AuthorityData[,c(4,5,6,7)]#so I am selecting all rows and the columns from the second to the fifth
+
+PCADataset$location<-as.factor(PCADataset$location)
+PCADataset$region<-as.factor(PCADataset$region)
+PCADataset$authority<-as.factor(PCADataset$authority)
+# Selecting columns with numerical components (those 5-10) to make a new data frame ####
+measures <- PCADataset[,c(5:10)]#so I am selecting all rows and the columns from the fifth to the tenth
 View(measures)# let see the new data set 
 
 #### Computing the PCA of the numerical measures ####
@@ -24,7 +31,7 @@ pcs
 plot(pcs)
 
 #### Create a data frame copied from sites and including the PC values ####
-pcdata <- AuthorityData #creating a new dataframe named pcSites containing all the variables that were on the original sites dataframe 
+pcdata <- PCADataset #creating a new data frame named pcdata containing all the variables that were on the original authority data 
 pcdata$pc1 <- pcs$x[,1] #creating a new variable named pc1 that will contain all the pc1 values (all rows and the first column of the pcs list)
 pcdata$pc2 <- pcs$x[,2]#creating a new variable named pc2 that will contain all the pc1 values (all rows and the second column of the pcs list)
 View(pcdata)
@@ -35,11 +42,13 @@ ggplot(pcdata, aes(x=pc1, y=pc2, color=location)) + #use pc1, pc2 and colour cod
   geom_point(size=6, alpha=0.5)+# use scatterplot and set size to 6 and 50% transparency
   theme_bw()+ # white background
   labs(title = "PCA")+ #add a title
-  geom_text(aes(label = authority),hjust=0, vjust=0) # adds authority labels
+  geom_text(aes(label = authority),hjust=0.5, vjust=-0.5) # adds authority labels
 
-autoplot(pcs, data=AuthorityData, colour='location', size=4, alpha=0.5, loadings=TRUE,loadings.label = TRUE )+
+autoplot(pcs, data=PCADataset, colour=location, size=4, alpha=0.5, loadings=TRUE,loadings.label = TRUE )+
   theme_bw()# this time we are not using ggplot but we are using autoplot within ggfortify and we are leaving the system to decide which type of graph to plot 
 #The loadings arrows will identify which are the variables that more impact the differences across the groups
+# Practical 1
+# Look at Impact on different deprivation areas
 
 #### K-Means Clustering ####
 
@@ -69,17 +78,17 @@ distMeasures <- dist(measures)# calculate the distance matrix computed by using 
 authorityHClust <- hclust(distMeasures, method="average")# Hierarchical cluster analysis usining average and save the result as a new object named sitesHclust
 
 #### Plotting results as a dendrogram ####
-authorityHClust$labels <- AuthorityData$location #create a new variable named labels in our sitesHClust that will contain the info about the period form the sites dataframe 
+authorityHClust$labels <- PCADataset$SIMDQuint #create a new variable named labels in our sitesHClust that will contain the info about the period form the sites dataframe 
 
 ggdendrogram(authorityHClust, rotate=T)#Plot the results using ggdendrogram 
 
 
 #### Machine Learning using Linear Discriminant Analysis ####
 
-daModel <- lda(location~FoodInsecurity+WelfareApp+Rent+Homeless, AuthorityData)#using linear discriminant analysis that will group together the period and elevation with all the other info we have available and save it in a new object named daModel
+daModel <- lda(location~FoodInsecurity+WelfareApp+Rent+Homeless, PCADataset)#using linear discriminant analysis that will group together the period and elevation with all the other info we have available and save it in a new object named daModel
 daModel #look what is inside the model we created
 
-prediction <- predict(daModel, AuthorityData)#use the predict function to analyse the sites file. In the real word the file sites of course will not be the same that we used to create the model but it will be a new dataset that we want to analyse against the model
+prediction <- predict(daModel, PCADataset)#use the predict function to analyse the sites file. In the real word the file sites of course will not be the same that we used to create the model but it will be a new dataset that we want to analyse against the model
 
 
 daAuthority <- pcdata #again we copy the pcSites and name it daSites
