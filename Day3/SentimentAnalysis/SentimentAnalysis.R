@@ -8,7 +8,7 @@ library(gganimate)
 #Import data
 SentimentScotland <- read_csv("day3/SentimentAnalysis/data/scotland_data.csv")
 #Import data
-SentimentScotland <- read_csv("day3/SentimentAnalysis/data/scotland_data.csv")
+SentimentUK <- read_csv("day3/SentimentAnalysis/data/uk_senti.csv")
 
 #Export text
 SentimentScotlandText <-SentimentScotland$selftext
