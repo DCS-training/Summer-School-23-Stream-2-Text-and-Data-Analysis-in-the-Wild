@@ -1,27 +1,19 @@
 # #### Statistical Analysis Practical Solutions ####
 
 # ==== Practical 1 ====
-# What about homeless application? Check the difference in increase/decrease of homeless applications between urban and rural authorities. Use a two sample t.test and determine whether or not the Null Hypothesis, that the Urban and Rural distinction is not a major factor, can be rejected.
+# What about homless application? Check the difference in increase/decrease of homeless application between urban and rural authorities. Use a two sample t.test and determine whether or not the Null Hypothesis, that the Urban and Rural distinction is not a major factor, can be rejected.
 
 mean(Rural$Homeless)
 mean(Urban$Homeless) # Urban journey times are shorter on average. Let's test the Null Hypothesis 
 one_sample_ttest <- t.test(Rural$Homeless, Urban$Homeless)
 
-print(one_sample_ttest) # In this case, we can see that the p value is well below 0.05, and so, the Null Hypothesis can be rejected, and we can conclude that there is a statistically significant impact on journey times to a GP's office between rural and urban authorities in Scotland. 
+print(one_sample_ttest) # In this case, we can see that the p value is = below 0.05, and so, the Null Hypothesis can be rejected, and we can conclude that there is a statistically significant impact on the raise of rents between urban and rural areas. 
+
 
 # ==== Practical 2 ====
-# Does deprivation have an impact on alcohol consumption? Check the most deprived 16 authorities alcohol consumption and see if it is significantly higher than the theoretical mean/mu value of 0.2 (rough rate of alcohol abuse across Scotland). Note, you will have to subset values below the median SIMD to get the 16 most deprived authorities.
+# Using an ANOVA test, determine the extent to which deprivation, the Urban-Rural divide and the areas of Scotland are each significant factors in determining increase/decrease in House Prices.
 
-Deprived <- subset(Scot_data, Scot_data$Deprivation == 'Most')
-
-mean(Deprived$Alcohol) # There is a higher rate of alcohol abuse in the more deprived areas.
-
-t.test(Deprived$Alcohol, mu = 0.2) # The p.value is below 0.05, and so the Null Hypothesis can be rejected. Deprivation seems to influence alcohol abuse in Scotland.
+summary(aov(Homeless ~ SIMDQuint + location + region, data = authority_data_cleaned))
 
 
-# ==== Practical 3 ====
-# Using an ANOVA test, determine the extent to which deprivation, alcohol abuse and the Urban-Rural divide are each significant factors in determining life expectancy.
-
-summary(aov(life_expectancy_2022 ~ Deprivation + location + Alcohol, data = Scot_data))
-
-# Looking at this, the Null Hypothesis that the Urban-Rural divide has no impact on life-expectancy cannot be rejected, as the p.value is above 0.05. The Null Hypothesis for alcohol abuse can be rejected, just, but with more a limite dimpact on residuals, it seems it's role in affecting life expectancy is far less than deprivation.
+# Looking at this, the Null Hypothesis that the Urban-Rural divide and the region have no impact on homeless applications. 

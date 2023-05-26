@@ -55,7 +55,7 @@ print(two_sample_ttest) # Our p value is significantly larger than 0.05, and so 
 
 # We can also use this to see if specific factors make a difference. For example, is the increase in food insecurity significantly higher between urban and rural authorities.
 
-# In this case we want to use the dataset that contains the % of increase/decrease
+# In this case we want to use the data set that contains the % of increase/decrease
 
 authority_data_cleaned<-read_csv("Day3/DataWrangling/outputs/authority_data_cleaned.csv")
 
@@ -84,25 +84,25 @@ mean(authority_data_cleaned$Rent) # Rent raise seems lower, but is this statisti
 
 t.test(authority_data_cleaned$Rent, mu = 9.5) # With a p value below 0.05, the Null Hypothesis can be rejected, and it seems there is a significant difference between Scotland raise in rent and general UK one (note these are imperfect data, with the Scottish sample include the whole 2022).
 
-# ---- Practical 2 ----
-# Does deprivation have an impact on alcohol consumption? Check the most deprived 16 authorities alcohol consumption and see if it is significantly higher than the theoretical mean/mu value of 0.2 (rough rate of alcohol abuse across Scotland).
 
 # ==== ANOVA Tests ====
-# ANOVA tests can determine the impact of an independent variable on a quantitative dependent variable of a dataset. 
+# ANOVA tests can determine the impact of an independent variable on a quantitative dependent variable of a data set. 
 
-# For example, lets see how deprivation impacts life expectancy.
-Deprived <- subset(Scot_data, Scot_data$Deprivation == 'Most')
-Less_deprived <- subset(Scot_data, Scot_data$Deprivation == 'Least')
+# For example, how the rent increase impact the different deprivation areas.
+summary(aov(Homeless ~ SIMDQuint, data = authority_data_cleaned)) # ANOVA tests can use the summary() function and the aov() function to give helpful outputs. The quantitative variable being tested is on the left separated from the independent variables by a ~. You can add multiple independent variables separated by +. Assign the data source with data = .
 
-mean(Deprived$life_expectancy_2022)
-mean(Less_deprived$life_expectancy_2022) # We can see the mean life expectancy is definitely higher in the less deprived areas.
 
-summary(aov(life_expectancy_2022 ~ Deprivation, data = Scot_data)) # ANOVA tests can use the summary() function and the aov() function to give helpful outputs. The quantitative variable being tested is on the left separated from the independent variables by a ~. You can add multiple independent variables separated by +. Assign the data source with data = .
+# The p.value is below 0.05, so it seems that deprivation does play a significant role in the increase of the Homeless applications overall but lets see in more detail 
+# Save the result of the anova
+AnovaResult<-aov(Homeless ~ SIMDQuint, data = authority_data_cleaned)
 
-# The p.value is well below 0.05, so it seems that deprivation plays a significant role negatively affecting life expectancy.
+# Now use Tukey multiple pairwise-comparisons
+TukeyTest <- TukeyHSD(AnovaResult)
+print(TukeyTest)
+#Check across all possible comparison
 
-# ---- Practical 3 ----
-# Using an ANOVA test, determine the extent to which deprivation, alcohol abuse and the Urban-Rural divide are each significant factors in determining life expectancy.
+# ---- Practical 2 ----
+# Using an ANOVA test, determine the extent to which deprivation, the Urban-Rural divide and the areas of Scotland are each significant factors in determining increase/decrease in Food Insecurity.
 
 # This is juts an introduction to hypothesis testing, but we will continue over the rest of the day looking at different statistical analyses.
 

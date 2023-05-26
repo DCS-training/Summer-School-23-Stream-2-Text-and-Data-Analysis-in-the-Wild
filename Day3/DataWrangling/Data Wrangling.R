@@ -185,7 +185,7 @@ authority_data_cleaned<-authority_data[,c(1:3,6,13,14,23:29)]# Nice cleaned data
 FromSIMD <- SIMD %>% 
   group_by(Council_area) %>% 
   summarize(Population=sum(Total_population),
-            SIMDQuint=as.factor(round(mean(SIMD2020v2_Quintile))), 
+            SIMDQuint=as.factor(floor(mean(SIMD2020v2_Quintile))), 
             Alcohol= round(mean(ALCOHOL)),
             PT_GP=round(mean(PT_GP)))
 
