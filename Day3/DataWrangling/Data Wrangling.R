@@ -180,12 +180,13 @@ authority_data$Foodbank<-round(((authority_data$foodbank_parcels_2022-authority_
 
 authority_data$Rent<-round(((authority_data$average_rent_2022-authority_data$average_rent_2021)/authority_data$average_rent_2021)*100,2)
 
-authority_data_cleaned<-authority_data[,c(1:3,6,13,14,23:29)]# Nice cleaned dataset for tomorrow
+authority_data_cleaned<-authority_data[,c(1:3,6,13,14,22:28)]# Nice cleaned dataset for tomorrow
 # Add some variables from the SIMD Dataset 
 FromSIMD <- SIMD %>% 
   group_by(Council_area) %>% 
   summarize(Population=sum(Total_population),
-            SIMDQuint=as.factor(floor(mean(SIMD2020v2_Quintile))), 
+            SIMDQuint=as.factor(floor(mean(SIMD2020v2_Quintile))),
+            SIMDDecil=as.factor(floor(mean(SIMD2020v2_Decile))),
             Alcohol= round(mean(ALCOHOL)),
             PT_GP=round(mean(PT_GP)))
 
