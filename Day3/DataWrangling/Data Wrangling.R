@@ -162,7 +162,7 @@ Merged_data <- merge(authority_data, Councils, by.x = 'authority', by.y = 'Counc
 # Create a new column with the average time traveled to a GP by Public Transport (SIMD$PT_GP) for each council. Add this to the merged column and check how the councils of lower and higher deprivation compare in this category.
 
 
-# #### END ####
+# #### END-ish ####
 # There is a lot more that is possible with R in terms of data wrangling. But now that we have an understanding of this, and some tidier, computer friendly data, we can start to check some of the observations we have made in these practicals through statistical analyses. 
 
 # ==== This is in preparation for tomorrow ====================
@@ -181,6 +181,17 @@ authority_data$Foodbank<-round(((authority_data$foodbank_parcels_2022-authority_
 authority_data$Rent<-round(((authority_data$average_rent_2022-authority_data$average_rent_2021)/authority_data$average_rent_2021)*100,2)
 
 authority_data_cleaned<-authority_data[,c(1:3,6,13,14,23:29)]# Nice cleaned dataset for tomorrow
+# Add some variables from the SIMD Dataset 
+FromSIMD <- SIMD %>% 
+  group_by(Council_area) %>% 
+  summarize(Population=sum(Total_population),
+            SIMDQuint=as.factor(round(mean(SIMD2020v2_Quintile))), 
+            Alcohol= round(mean(ALCOHOL)),
+            PT_GP=round(mean(PT_GP)))
+
+Merge <- merge(authority_data_cleaned, FromSIMD, by.x = 'authority', by.y = 'Council_area')
+# Rename Merge as authority_data_cleaned to export 
+authority_data_cleaned<-Merge
 
 # Just to make sure we have it ready tomorrow let's save it as an output
 write_csv(authority_data_cleaned, "Day3/DataWrangling/outputs/authority_data_cleaned.csv")
