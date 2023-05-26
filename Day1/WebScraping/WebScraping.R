@@ -145,46 +145,53 @@ dates <- map(ArticleLinksFlat, get.date)#Get all the dates from the list of link
 
 titles <- map(ArticleLinksFlat, get.title)#Get all the titles from the list of links for the first 300 articles
 
-#Clean the Text because each Gov.uk Articles contains a Further information section that is not present in the Scottish Gov 
-# extract text up to the word "Further information"
-
+# Clean the Text because each Gov.uk Articles contains a Further information section that is not present in the Scottish Gov 
+# Extract text up to the word "Further information"
 
 # Remove text after "Further information"
-# Generate the Regex function to remove anything past further info
+# Generate the Regex to remove anything past further info
 MyRegex<-"(?i)\n(further|more|additional)\\s+information.*$"
-
+# sub() applies the regex to the texts, replacing it with nothing (ie. "")
 clean_text <- sub(MyRegex, "", texts)
 
 # Now we can finally bring them together in a dataframe 
 UKNews<- as.data.frame(cbind(dates,titles, clean_text))
-UKNews$clean_text <-unlist(UKNews$clean_text)# transform texts from list to vector
-UKNews$dates <-unlist(UKNews$dates)# transform dates from list to vector
-UKNews$titles <-unlist(UKNews$titles)# transform titles from list to vector
-UKNews$dates<-as.Date(UKNews$dates, format = "%d %B %Y")# make sure the date is encoded as date (https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/as.Date)
+UKNews$clean_text <-unlist(UKNews$clean_text) # Transform texts from list to vector
+UKNews$dates <-unlist(UKNews$dates) #Transform dates from list to vector
+UKNews$titles <-unlist(UKNews$titles) #Transform titles from list to vector
+UKNews$dates<-as.Date(UKNews$dates, format = "%d %B %Y") #Make sure the date is encoded as date (https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/as.Date)
 
-# Cost of Living is not a new concept so although is likely that most of the article we scraped are from the last couple of years let's subset out data-set to make sure all of them are connected to the ongoing issue
+# Cost of Living is not a new concept so although is likely that most of the article we scraped are from the last couple of years let's subset our dataset to make sure all of them are connected to the ongoing issue
 
-UkNewsLat3Years<- subset(UKNews, dates >= "2020-01-01") 
-# now we have only 222 let's round to 200
-UkNewsLat3Years<-UkNewsLat3Years %>% 
+UkNewsLast3Years <- subset(UKNews, dates >= "2020-01-01")  # Subset so the date is greater than Jan 1st 2020
+# Now we have only 222 articles let's round to 200
+UkNewsLast3Years <- UkNewsLast3Years %>% 
   arrange(desc(dates)) %>% #order by the latest dates
-  slice(1:200)# Select the most recent 200 articles
+  slice(1:200) # Select the most recent 200 articles (the first 200 in a list)
 
 #Export the file created 
-write.csv(UkNewsLat3Years, "Day1/WebScraping/outputs/UKNews.csv")
+write.csv(UkNewsLast3Years, "Day1/WebScraping/outputs/UKNews.csv")
 
-# Now we do the same for the Scotland News ======================
+
+# Now we do the same for the Scotland News ==========
+# As a group, scrape the Scottish government news website and create a DF comparable to the UK one
+
+# Space here for your work ==========
 
 # Some hint to start 
 # The first page
 page1 <- 'https://www.gov.scot/news/'
+
 # The first part of the urls
 format <- 'https://www.gov.scot/news/?term=cost%20of%20living&cat=filter&page='
-# the numbers for the rest of the pages (here we are using a sample so it's more managable later on)
-nums <- 2:30 ##this is just a demo mention timeouts. To get the same amount since in the scotland webpage is 10 per page 
-#nums <- 2:632 #uncomment this later
-pages <- paste0(format, nums)
-pages <- c(page1, pages)
 
-# Have a look at the beginning of the list
-head(pages)
+
+
+
+
+
+
+
+
+
+##### 
