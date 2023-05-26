@@ -21,18 +21,19 @@ page1 <- 'https://www.gov.uk/search/news-and-communications?keywords=cost%20of%2
 # The first part of the urls for all the other pages results
 format <- 'https://www.gov.uk/search/news-and-communications?keywords=cost+of+living&order=relevance&page='
 
-# the numbers for the rest of the pages (here we are using a sample so it's more managable later on)
-nums <- 2:15 ##this is just a demo to not scrape too many pages 
-#nums <- 2:500 #uncomment this later if you want to scrape more 
-pages <- paste0(format, nums)#  we now have a chr vector with the start of each page of the results (well the second to 15 pages)
+# The numbers for the rest of the pages (here we are using a sample so it's more managable later on)
+nums <- 2:15 # This is just a demo to not scrape too many pages 
+#nums <- 2:500 # Uncomment this later if you want to scrape more 
+pages <- paste0(format, nums)#  We now have a chr vector with the start of each page of the results (well the second to 15 pages)
 
 pages <- c(page1, pages) # We add the first page 
 
 # Have a look at the beginning of the list
 head(pages)
 
-# Now we need to start building the function to extract the info from this pages we can use selector gadget to help us identify the right html node 
-get.article.links <- function(x){
+# Now we need to start building the function to extract the info from our pages
+# We can use selector gadget to help us identify the right html node [do this now]
+get.article.links <- function(x){ # Put x, which stands in this case for a single URL, as the only argument for the function
   links <- read_html(x) %>% # Reads the HTML of the page into the environment
     html_nodes('.gem-c-document-list__item-title.govuk-link') %>% # Selects all instances of content matching a CSS selector
     html_attr('href') # Specifies that we want the URL from this content
@@ -55,14 +56,15 @@ head(ArticleLinksFlat) #look at the top of it
 
 
 # As we can see, 'https://www.gov.uk' is excluded from our links above, so just need to append each link with it.
-
+# Create a string with this text
 base <- 'https://www.gov.uk'
 
-ArticleLinksFlat <- paste0(base, ArticleLinksFlat)#Nb I am overwriting my previous variable
+ArticleLinksFlat <- paste0(base, ArticleLinksFlat) #Nb I am overwriting my previous variable
 
 # Inspect this visually
 head(ArticleLinksFlat)
 
+# Get the length
 length(ArticleLinksFlat)
 
 # See what one entry looks like
@@ -72,62 +74,62 @@ ArticleLinksFlat[100]
 
 # Again first of all we subset to make sure we are not going to be timed out
 
-# Create test set of links that will select only the first 5 links
+# Create test set of links that will select only the first 5 links using the head() function
 test <- head(ArticleLinksFlat)
 test
 
-# Write a function to get titles. To identify the right html node you need to inspect any of the link pages 
+# Write a function to get titles. 
+# To identify the right html node you need to inspect any of the link pages with the selector gadget
 get.title <- function(x){
-  title <- read_html(x) %>% 
-    html_node('.gem-c-lead-paragraph') %>%
-    html_text()
+  title <- read_html(x) %>% # Get the HTML
+    html_node('.gem-c-lead-paragraph') %>% # Select the first item with the chosen CSS selector
+    html_text() # Specify that we want the text
 }
 
 # Test the function
-ArticlesTest <- map(test, get.title)# This will actually do the scraping bit
+ArticlesTest <- map(test, get.title) # This will actually do the scraping bit
 
 # Run the test
-ArticlesTest # looks fine now let's look at dates
+ArticlesTest # The output looks alright, so now let's look at dates
 
 
-#Because the date is store together with other info we need to work in steps to get the date 
-# First we need to get to
-# write a function to get the 2nd element of a list
+#Because the date is stored together with other info we need to work in steps to get the date 
 
-second_element <- function(x){
+# First we need to write a function to get the 2nd element of a list
+second_element <- function(x){ # Give the function one argument, which is the list in which we have the dates
   
-  out <- x[2]
+  out <- x[2] # Select the 2nd element of the list
+  # Square bracket are used to select by position. Remember that R start counting from 1 not from 0
   
 }
-# Square bracket are used to select by position. Remember that R start counting from 1 not from 0
 
-# Now we can write a function to get the dates
+
+# Now we can write a function to get the dates, including this previous function
 
 get.date <- function(x){
   
-  date <- read_html(x) %>%
+  date <- read_html(x) %>% # Read the HTML of the page
     
     # This gets the block in which the author and date are stored together, the output will be a list of 2
     
     html_nodes('.gem-c-metadata__definition') %>%
     
-    html_text()%>%
+    html_text() %>% 
     
-    # This gets the 2nd element
-    
+    # Include the previous function at the end of the pipe, his gets the 2nd element
     second_element()
   
 }
 
 
-DatesTest <-map(test, get.date)# Again let's scrape the first ones so that we can check 
+DatesTest <-map(test, get.date) # Again let's scrape the first ones so that we can check 
 
 
 # Write a function to get the text of the article 
 get.text <- function(x){
-  body <- read_html(x) %>%
-    html_node('.gem-c-govspeak') %>%
-    html_text()
+  body <- read_html(x) %>% # Get the HTML
+    html_node('.gem-c-govspeak') %>% # Get the first object matching the CSS selector
+    html_text() # Specify that we want the text
 }
 
 # Test the function
