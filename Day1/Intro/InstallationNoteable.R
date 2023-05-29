@@ -9,6 +9,7 @@ install.packages("textstem")
 install.packages("quanteda.textstats")
 install.packages("quanteda.textmodels")
 install.packages("quanteda.textplots")
+install.packages("tidytext")
 
 # Sentiment Analysis 
 install.packages("syuzhet")
