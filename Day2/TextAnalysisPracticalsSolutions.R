@@ -86,7 +86,7 @@ ggplot(TotBreakout, aes(x=MonthYear, y=NArticles))+ # Select data set and coordi
 
 
 #tokenise the corpus 
-article_tokens_SC <- tokens(article_text_SC, 
+article_tokens_SC <- quanteda::tokens(article_text_SC, 
                          remove_symbols=TRUE, 
                          remove_url=TRUE, 
                          remove_punct=TRUE)
@@ -94,8 +94,6 @@ article_tokens_SC <- tokens(article_text_SC,
 #remove tokens under 3 characters:
 article_tokens_SC <- tokens_select(article_tokens_SC, min_nchar = 3)
 
-
-Try <-data.frame(text = sapply(article_text_SC, as.character), stringsAsFactors = FALSE)
 
 #keyword search examples (using kwic aka "keyword in context")
 kwic(article_tokens_SC, "cost")
@@ -161,3 +159,30 @@ data.frame(list(term = names(top_keys_SC), frequency = unname(top_keys_SC))) %>%
   theme_bw() +
   labs(x = "Term", y = "Frequency") +
   theme(axis.text.x=element_text(angle=90, hjust=1))
+
+
+
+# 4. Sentiment-category analysis with syuzhet:-------------------------------------
+## 4.1. Getting Setup --------------
+SentimentScotlandText <-SC_data_clean$texts # new object with the text of the articles
+
+## 4.2. Extract the sentiment scores -------------
+sentiment_scores_SC <- get_nrc_sentiment(SentimentScotlandText, lang="english")
+
+head(sentiment_scores_SC)# check content
+summary(sentiment_scores_SC)# Plot summary 
+
+
+## 4.3. Plot the sentiment category scores---------
+par(mar = c(5, 5, 4, 2) + 0.1) # define area graphs
+barplot(
+  colSums(prop.table(sentiment_scores_SC[, 1:8])),
+  space = 0.2,
+  horiz = FALSE,
+  las = 1,
+  cex.names = 0.7,
+  col = brewer.pal(n = 8, name = "Set3"),
+  main = "Sentiment by Category: Scotland Data",
+  xlab="category", ylab = 'frequency')
+
+     

@@ -1,15 +1,13 @@
-###############################################################
-# CDCS Summer School 2023
-# Text Analysis Part 2
-# Tuesday, 6th June
-###############################################################
+############ TEXT ANALYSIS  ##################
 
-# Research Questions =========================
-# 1.Can we see a peak in the amount and length of articles on the cost of living in the last 3 years. Is this trend similar for both Scotland and general UK website
-# 2.Can we see a difference in the wording about the cost of living between Scottish and general UK governments websites?
+# RESEARCH QUESTIONS ##############
+# 1.What are some common themes that appear in the UK government's publications about the CoL? 
+# 2.Comparing the UK and Scotland data sets, do we see any patterns/similarities/differences in themes?
 
+
+# PART2: TOPIC MODELLING ###########
 # Setting up ===================
-# Library needed
+# Libraries needed
 library(quanteda)
 library(tidyverse)
 library(quanteda.textstats)
@@ -17,43 +15,37 @@ library(quanteda.textmodels)
 library(quanteda.textplots)
 library(tm)
 library(topicmodels)
+library(syuzhet)
+library(ggplot2)
+library(RColorBrewer)
 
-# Load the data and subset the text column
-# Load the Uk data
+# Load the data:
 uk_data <- read_csv("Day1/WebScraping/outputs/UKNews.csv")
-# Drop the first column that we do not need
-uk_data<-uk_data[, 2:4]
-# Examine the data 
-summary(uk_data)
-# Clean it with Regex
-uk_data_clean <- mutate_if(uk_data, #change if is character so titles and texts
-                           is.character, 
-                           str_replace_all, 
-                           pattern = "\r?\n|\r", #What I am searching
-                           replacement = " ")#What I am replacing with
-
-# Which will insert only one space regardless whether the text contains \r\n, \n or \r.
-
-
-# Load the Scotland data
 SC_data <- read_csv("Day1/WebScraping/outputs/ScotlandNews.csv")
-# Drop the first column that we do not need
+# Drop the first column that we do not need:
+uk_data<-uk_data[, 2:4]
 SC_data<-SC_data[, 2:4]
-# Examine the data 
+# Examine the data:
+summary(uk_data)
 summary(SC_data)
-# Clean it with Regex
-SC_data_clean <- mutate_if(SC_data, #change if is character so titles and texts
+# Clean the data: change all text to strings; remove characters associated with line breaks, replacing them with a space:
+uk_data_clean <- mutate_if(uk_data, 
                            is.character, 
                            str_replace_all, 
-                           pattern = "\r?\n|\r", #What I am searching
-                           replacement = " ")#What I am replacing with
+                           pattern = "\r?\n|\r", #Searching for
+                           replacement = " ")#Replace results with
 
-# Which will insert only one space regardless whether the text contains \r\n, \n or \r.
+SC_data_clean <- mutate_if(SC_data, 
+                           is.character, 
+                           str_replace_all, 
+                           pattern = 
+                           replacement = " ")
 
-# select only text
+# We'll work with the UK data first, and then you'll repeat the process with the Scotland data on your own later in this block.
+# Subset the text column and save it as an object:
 uk_data_clean_text<-uk_data_clean$clean_text
 
-# Cleaning the UK data set===========================
+# Prepare the data for analysis, creating and clenaing a tm Corpus object:
 uk_corpus <- VCorpus(VectorSource(uk_data_clean_text))# transform our data set in a corpus
 uk_corpus <- tm_map (uk_corpus, content_transformer(tolower))# remove capitalised letters
 uk_corpus <- tm_map (uk_corpus, removePunctuation)# remove punctuation
@@ -63,18 +55,20 @@ uk_corpus <- tm_map (uk_corpus, removeNumbers)# remove numbers
 uk_corpus <- tm_map (uk_corpus, stripWhitespace) # remove multiple white spaces
 
 # Topic Modelling=================================
-# Dtm of cleaned corpus
-lda_dtm_uk <- DocumentTermMatrix(uk_corpus) #A document-term matrix is a mathematical matrix that describes the frequency of terms that occur in a collection of documents. In a document-term matrix, rows correspond to documents in the collection and columns correspond to terms.
+# Create a document term matrix of the corpus.
+# a mathematical matrix that describes the frequency of terms that occur in a collection of documents. In a document-term matrix, 
+#rows correspond to documents in the collection and columns correspond to terms.
+lda_dtm_uk <- DocumentTermMatrix(uk_corpus)
 inspect(lda_dtm_uk) 
 
-# Check which terms appear at least 100 times
+# Print the terms in the dataset that appear at least 100 times
 findFreqTerms(lda_dtm_uk, 100) 
 
 # Print the terms associated with the keyword that have a correlation coefficient of >= 0.4:
 findAssocs(lda_dtm_uk, "england", .4)
 findAssocs(lda_dtm_uk, "scotland", .4)
 
-# Create new object containing our results
+# Create a new object containing our results
 AssociationEngland<-data.frame(findAssocs(lda_dtm_uk, "england", .4))
 AssociationEnglandCleaned<- data.frame(Term=rownames(AssociationEngland), Value=AssociationEngland[,1], Association= "England")
 
@@ -96,67 +90,62 @@ term_freq_uk <- sort(term_freq_uk, decreasing=TRUE)
 term_freq_uk[0:30]
 
 
-# LDA topic model:-------------------------------------
+# LDA topic modelling:-------------------------------------
+#Create a matrix for LDA analsyis, defining the number of topics (k=5)
 uk_lda <- LDA(lda_dtm_uk, k=5, control=list(seed=1234))
-
-summary(uk_lda)
-#...ok, let's remove the empty rows in the dtm:
-#rowTotals <-apply (lda_dtm,1,sum) #running this line takes time
-#empty.rows<-lda_dtm[rowTotals==0,]$dimnames[1][[1]]  
-#clean_corpus<-uk_corpus[-as.numeric(empty.rows)]
-#lda_dtm <- DocumentTermMatrix(clean_corpus) I do not think we need this anymore since I managed to clean the dataframe at the start but did not want to cancel until checking with you 
-#try the LDA topic model again:
-#uk_lda <- LDA(lda_dtm, k=5, control=list(seed=1234))
-
+#Get topics and terms from the LDA analysis
 uk_lda_topics<-as.matrix(topics(uk_lda))
 uk_lda_terms <- as.matrix(terms(uk_lda,10))
-
 # Print the top 10 terms associated with each topic:
 uk_lda_terms[1:10,]
 
-# Have a look at the output and discuss your thoughts with your table mates.
+# Have a look at the output and discuss your thoughts with your table.
 
-# Let's try the lda again, expanding the number of topics to 10
+# Let's try the LDA again, expanding the number of topics to 10
 uk_lda <- LDA(lda_dtm_uk, k=10, control=list(seed=1234))
 uk_lda_topics<-as.matrix(topics(uk_lda))
 uk_lda_terms <- as.matrix(terms(uk_lda,10))
 uk_lda_terms[1:10,]
 
-# What can we observe about the effect of adding more topics? Can we identify possible topics?
+#What can we observe about the effect of adding more topics? 
+#With your table, come up with a label for each topic.  What can we learn about our data using LDA? 
 
-# LSA Topic Modelling -----------------------------
-# Let's try another form of topic modelling: LSA. we'll be using Quanteda here
-uk_tokens <- tokens(uk_data_clean$clean_text, remove_symbols=TRUE, remove_url=TRUE, remove_punct=TRUE)
-uk_tokens <- tokens_select(uk_tokens, min_nchar = 3)# Remove token under 3 characters
-lsa_dfm_uk <- dfm(uk_tokens) # Document feature matrix
-lsa_dfm_uk <- dfm_remove(lsa_dfm_uk, stopwords('english'))
+#Let's remove some of the words appearing that aren't telling us much about the data, and re-run LDA:
+uk_corpus_2 <- tm_map (uk_corpus, removeWords, c('will', 'can', 'cost', 'living', 'help', 'people', 'new', 'cma', 'million'))
+lda_dtm_uk_2 <- DocumentTermMatrix(uk_corpus_2)
+uk_lda_2 <- LDA(lda_dtm_uk_2, k=5, control=list(seed=1234))
+uk_lda_topics_2<-as.matrix(topics(uk_lda_2))
+uk_lda_terms_2 <- as.matrix(terms(uk_lda_2,10))
+# Print the top 10 terms associated with each topic:
+uk_lda_terms_2[1:10,]
 
-# Run the Model
-uk_lsa <- textmodel_lsa(lsa_dfm_uk)
+#Discuss the results with your table. From a human perspective, did removing extra words improve the topic modelling analysis?
 
-
-# Use the Scotland data to test the model based on the uk data
-scot_tokens <- tokens(SC_data_clean$texts, remove_symbols=TRUE, remove_url=TRUE, remove_punct=TRUE)
-scot_tokens <- tokens_select(scot_tokens, min_nchar = 3)
-scot_dfm <- dfm(scot_tokens)
-scot_dfm <- dfm_remove(scot_dfm, stopwords('english'))
-
-scot_lsa <- scot_dfm %>%
-  dfm_match(featnames(lsa_dfm_uk))# Some Comment here 
-
-# I cannot really understand what you are doing so not sure how to help with plotting 
-newq <- predict(uk_lsa, newdata = scot_lsa)
-newq$docs_newspace[,1:3]
-
-result <- data.frame(Text = rownames(newq$docs_newspace), Dim1 = newq$docs_newspace[,1], Dim2 = newq$docs_newspace[,2])
+# Sentiment-category analysis with syuzhet:-------------------------------------
+SentimentScotlandText <-SC_data_clean$clean_text
+sentiment_scores <- get_nrc_sentiment(SentimentScotlandText, lang="english")
+head(sentiment_scores)
+summary(sentiment_scores)
+SentimentScotlandText
 
 
-# Create a scatter plot
-ggplot(result, aes(x = Dim1, y = Dim2)) +
-  geom_point() +
-  labs(x = "LSA Dimension 1", y = "LSA Dimension 2") +
-  theme_bw()+
-  ggtitle("LSA Visualisation")
+#Plot the sentiment category scores:
+par(mar = c(5, 5, 4, 2) + 0.1) 
+barplot(
+  colSums(prop.table(sentiment_scores[, 1:8])),
+  space = 0.2,
+  horiz = FALSE,
+  las = 1,
+  cex.names = 0.7,
+  col = brewer.pal(n = 8, name = "Set3"),
+  main = "Sentiment by Category: Scotland Data",
+  xlab="category", ylab = 'frequency')
 
 
-# Wrap-up discussion
+#With your table, repeat this analysis for the UK dataset. What can you conclude about sentiment categorisation?
+
+#Wrap-up discussion:
+#1. What are the pros and cons of the methods we have used in this block?
+#2. What have we learned about our research questions? What do we still need to find out, and what sorts of analysis might be helpful?
+
+

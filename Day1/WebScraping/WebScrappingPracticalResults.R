@@ -7,7 +7,7 @@ page1 <- 'https://www.gov.scot/news/'
 # The first part of the urls
 format <- 'https://www.gov.scot/news/?term=cost%20of%20living&cat=filter&page='
 # the numbers for the rest of the pages (here we are using a sample so it's more managable later on)
-nums <- 2:15 #
+nums <- 2:30 #
 #nums <- 2:632 #uncomment this later
 pages <- paste0(format, nums)
 pages <- c(page1, pages)

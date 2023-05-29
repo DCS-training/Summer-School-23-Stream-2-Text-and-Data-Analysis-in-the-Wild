@@ -1,5 +1,9 @@
 ############### WEB SCRAPING ##########################
-# PART1: Scraping the UK Governement Website ###########
+# RESEARCH QUESTIONS #######
+# 1. Can I automatically extract news items from the UK Government website News sections on the cost of living?
+# 2. Can I do the same for the Scottish Government website?
+
+# PART1: Scraping the UK Government Website ###########
 # 1. Getting Setup ====================
 ## 1.1. Libraries needed--------------
 library(tidyverse)

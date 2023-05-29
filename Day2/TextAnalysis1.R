@@ -1,15 +1,12 @@
-###############################################################
-# CDCS Summer School 2023
-# Text Analysis Part 1
-# Tuesday, 6th June
-###############################################################
+############ TEXT ANALYSIS  ##################
 
-# Research Questions =========================
-# 1.What can we observe about the number and length of articles on the cost of living in the last 3 years? How do the datasets compare?
-# 2.Can we see a difference in the wording about the cost of living between the datasets?
+# RESEARCH QUESTIONS ##############
+# 1. What can we observe about the number and length of articles on the cost of living in the last 3 years? How do the data sets compare?
+# 2. Can we see a difference in the wording about the cost of living between the data sets?
 
-# Setting up ===================
-# Load required libraries
+# PART1: DATA CLEANING AND BASIC ANALYSIS
+# 1. Getting Setup ====================
+## 1.1. Load required libraries ------------
 library(quanteda)
 library(quanteda.textplots)
 library(quanteda.textmodels)
@@ -18,13 +15,15 @@ library(lexicon)
 library(tidyverse)
 library (tm)
 
-# Load the Uk data
+## 1.2 Load the Uk data ------------
 uk_data <- read_csv("Day1/WebScraping/outputs/UKNews.csv")
-# Examine the data 
+
+## 1.3  Examine the data ------------
 summary(uk_data)
 # Drop the first column that we do not need
 uk_data<-uk_data[, 2:4]
 
+# 2. Basic Cleaning =================
 # Look at the text of our articles
 head(uk_data$clean_text)
 # There are a lot of formatting errors (next line, next paragraph) that we want to clean up
@@ -36,11 +35,13 @@ uk_data_clean <- mutate_if(uk_data, #change if is character so titles and texts
 
 # Which will insert only one space regardless whether the text contains \r\n, \n or \r.
 # Let's check again 
-head(uk_data_clean$clean_text)
+head(uk_data_clean$clean_text) # Now is much cleaner
 
+# 3. Create a Quanteda Corpus ===========
 # Create a Quanteda corpus of the 'article text' column from our data set:
 article_text<-corpus(uk_data_clean, text_field='clean_text')
 
+# 4. Extract Information about the Corpus ================
 # Some methods for extracting information about the corpus:
 # Print doc in position 5 of the corpus
 summary(article_text, 5)
@@ -50,6 +51,8 @@ ndoc(article_text)
 nchar(article_text[1:10]) 
 # Check number of tokens in the first 10 documents
 ntoken(article_text[1:10]) 
+
+## 4.1 Visualise these results --------------
 # Create a new vector with tokens for all articles and store the vector as a new dataframe with three columns (Ntoken, Dataset, Date)
 NtokenUK<-as.vector(ntoken(article_text))
 TokenUK <-data.frame(Tokens=NtokenUK, Dataset="UK", Date=uk_data_clean$dates)
@@ -72,17 +75,20 @@ ggplot(BreakoutUK, aes(x=MonthYear, y=NArticles))+ # Select data set and coordin
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), legend.position = "bottom")+ # Rotate labels of x and move them slightly down. Plus move the position to the bottom 
   guides(size = "none") # Remove the Size from the Legend 
 
+# What is telling us this graph?
+
+# 5. Tokenise the Corpus =================
 # Now we can tokenise the corpus 
-article_tokens <- tokens(article_text, 
+article_tokens <- quanteda::tokens(article_text, 
                          remove_symbols=TRUE, 
                          remove_url=TRUE, 
                          remove_punct=TRUE)
 
-#remove tokens under 3 characters:
+# Remove tokens under 3 characters:
 article_tokens <- tokens_select(article_tokens, min_nchar = 3)
 
-
-#keyword search examples (using kwic aka "keyword in context")
+# 6. Keywords in Context =================
+# keyword search examples (using kwic aka "keyword in context")
 kwic(article_tokens, "cost")
 kwic(article_tokens, "cost", 3)
 article_tokens %>% 
@@ -90,18 +96,20 @@ article_tokens %>%
 article_tokens %>%
   kwic(pattern=c("price", "bills", "payment"))
 
-#convert to document-feature matrix (aka "dfm")
+# 7. Visualise the Results ==============
+# Convert to document-feature matrix (aka "dfm")
 dfm_uk <- dfm(article_tokens)
 
-#plot a wordcloud
+## 7.1. Wordcolud ----------------------
+# Plot a wordcloud
 textplot_wordcloud(dfm_uk, max_words=100, color='black')
+# What observations do we have about the wordcloud? what should our next steps be?
 
-#what observations do we have about the wordcloud? what should our next steps be?
-
-#cleaning: lowercase
+## 7.2. Cleaning the Wordcloud ----------------------
+# To lowercase
 dfm_uk <- dfm_tolower(dfm_uk)
 
-# Cleaning: stopword removal
+# Remove Stop-words
 dfm_nostop <- dfm_remove(dfm_uk, stopwords('english'))
 topfeatures(dfm_nostop, 10)
 topfeatures(dfm_uk, 10)
@@ -114,41 +122,40 @@ textplot_wordcloud(dfm_nostop, rotation = 0.25,
 
 # What observations do we have?
 
+## 7.3. Remove Costum Stopwords --------------------
+# We can also create a custom list of words to remove from the corpus
 
-# We can also create a custom list of words to remove from the corpus:
-
-customstopwords <- c("cost", "living", "2023")#removed keywords that aren't telling us much
+customstopwords <- c("cost", "living", "will")#removed keywords that aren't telling us much or that skew the results
 
 dfm_nostop_cost <- dfm_remove(dfm_uk, c(stopwords('english'), customstopwords))
 topfeatures(dfm_nostop, 10)
 topfeatures(dfm_nostop_cost, 10)
 
-
+# 8. Further Cleaning =====================
 # Further steps for cleaning: stemming vs. lemmatization
-# i. stemming
+## 8.1. Stemming ===========
 nostop_toks <- tokens_select(article_tokens, pattern = stopwords("en"), selection = "remove")
 stem_toks <- tokens_wordstem(nostop_toks, language=quanteda_options('language_stemmer'))
 stem_dfm <- dfm(stem_toks)
-
-#let's see the top features
+# Let's see the top features
 topfeatures(stem_dfm, 30)
 
-
-# ii lemmatization
+## 8.2. Lemmatization ================
 lemmas <- tokens_replace(nostop_toks, pattern = lexicon::hash_lemmas$token, replacement = lexicon::hash_lemmas$lemma)
 lemma_dfm <- dfm(lemmas)
 
 topfeatures(stem_dfm, 20)
 topfeatures(lemma_dfm, 20)
 
-#what can we observe about stemming and lemmatization? which method (if any) is better for answering our research questions, and why?
+# What can we observe about stemming and lemmatization? which method (if any) is better for answering our research questions, and why?
 
-#make a word cloud of the lemmatized results:
+# Make a word cloud of the lemmatized results:
 textplot_wordcloud(lemma_dfm, rotation = 0.25,
                    max_words=50,
                    color = rev(RColorBrewer::brewer.pal(10, "Paired")))
 
-#plot the top 20 words (non-lemmatized) in another way:
+# 9. Plot Frequency
+# Plot the top 20 words (non-lemmatized) in another way:
 top_keys <- topfeatures (dfm_nostop, 20)
 data.frame(list(term = names(top_keys), frequency = unname(top_keys))) %>% # Create a data.frame for ggplot
   ggplot(aes(x = reorder(term,-frequency), y = frequency)) + # Plotting with ggplot2
@@ -210,3 +217,5 @@ article_text_SC<-corpus(SC_data_clean, text_field='texts')
 #4.Discuss the pros and cons of the text mining methods we've covered so far.
 #bonus points for coming up with a potential use case in the context of your research!
 
+# Export our data for Friday visualisation ##########
+write_csv(uk_data_clean, "Day5/data/TextDataVis.csv")
