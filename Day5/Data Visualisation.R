@@ -53,9 +53,9 @@ browseURL("https://www.springer.com/in/book/9780387245447")
 
 # ggplot is called, as with any function, using 'ggplot()'. The first argument is the data itself 'Scot_data'. The second is aesthetics 'aes()'. Aesthetics takes additional arguments, in this case, the data to plot on the x 'SIMD' and y 'life_expectancy_2022' axes. Finally, we include a separate function for building the geometry of the plot, in this case 'geom_point()', to create a scatter/dot plot.
 
-Basic_plot <- ggplot(Scot_data, aes(SIMD, life_expectancy_2022, shape = location)) + geom_point() # Additional elements can be added to aesthetics, eg. shape, in this case based on whether the authority is Urban or Rural.
+Basic_plot <- ggplot(Scot_data, aes(SIMD, life_expectancy_2022, shape = location)) # Additional elements can be added to aesthetics, eg. shape, in this case based on whether the authority is Urban or Rural.
 
-Basic_plot
+Basic_plot + geom_point()
 
 Basic_plot + geom_point(aes(colour = region), size = Scot_data$Population/100000) # Aesthetic values and size can also be added to the geometry (note, size takes raw values, so we divided it by 100,000 here so each point doesn't take up the entire plot!)
 
@@ -74,7 +74,7 @@ Basic_plot + geom_histogram(colour = 'black', fill = 'indianred3', bins = 10)
 
 # 3.2.1 Working with the Theme ---------------
 # The theme() argument allows for deep customization of non-data components of plots 
-HousePrices <- ggplot(authority_data, aes(HousePrices))
+HousePrices <- ggplot(authority_data, aes(HousePrices)) # We can also check the general trend of how house prices have icnreased from 2021-2022.
 
 HousePrices  + geom_histogram(colour = 'gray2', fill = 'indianred3', bins = 20) + theme_bw() 
 
@@ -82,37 +82,41 @@ HousePrices  + geom_histogram(colour = 'gray2', fill = 'indianred3', bins = 20) 
 
 HousePrices  + geom_histogram(colour = 'gray2', fill = 'indianred3', bins = 20) +  theme_void()
 
+# The increases have a roughly normal distribution, with an average increase of around 12%, but with some being considerably higher. 
+
 # This site contains a list of possible ready made themes, but standard themes can be much more minutely adjusted
 browseURL("https://ggplot2.tidyverse.org/reference/ggtheme.html")
 
 # 3.2.2 Multidimensional Data ---------
-ggplot(authority_data, aes(life_expectancy_2022, Alcohol, shape = as.factor(SIMDQuint))) + #we need to use factor because when we re-import the data R encoded SIMD Quint as anumber again
-  geom_point(aes(colour = location), size = 4) # In this scatter plot, we used the SIMD Quantile variable to change the shape and and 'location' to change the colour of the data, adding more dimensions to the plot.
+ggplot(authority_data, aes(life_expectancy_2022, Alcohol, shape = as.factor(SIMDQuint))) + # we need to use factor because when we re-import the data R encoded SIMD Quint as numeric again
+  geom_point(aes(colour = location), size = 4) # In this scatter plot, we used the SIMD Quantile variable to change the shape and 'location' to change the colour of the data, adding more dimensions to the plot.
+
+# This appears to show a negative relationship between alcohol abuse/deprivation and life expectancy. 
 
 HousePrices  + geom_histogram(aes(fill = as.factor(SIMDQuint)), colour = 'gray2', bins = 20) # Note aesthetics using variable rather than preset colours require to be within the aesthetic 'aes()' argument.
 
+# This shows a fairly even spread across deprivation levels for the increase in house prices.
+
 #3.2.3. Legends ---------------
 # Legends can be customized using theme() in multiple ways, including setting position or removing it altogether
-HousePrices <- ggplot(authority_data, aes(HousePrices)) # Let's create a plot showing the change in rents across the different areas of Scotland, as a percentage. We did it already for the authority-data but this is to show that you can do it on the fly too
+HousePrices <- ggplot(authority_data, aes(HousePrices)) # Let's create a plot showing the change in house prices across the different areas of Scotland, as a percentage. We did it already for the authority-data but this is to show that you can do it on the fly too
 
-HousePrices +
+HousePrice_SIMD <- HousePrices +
   geom_histogram(aes(fill = as.factor(SIMDDecil)), colour = 'gray2', bins = 40)
 
-HousePrices +
-  geom_histogram(aes(fill = as.factor(SIMDDecil)), colour = 'gray2', bins = 40) +
+HousePrice_SIMD
+
+HousePrice_SIMD +
   theme(legend.position = "none") # Remove legend
 
-HousePrices +
-  geom_histogram(aes(fill = as.factor(SIMDDecil)), colour = 'gray2', bins = 40) +
+HousePrice_SIMD +
   theme(legend.position = "top") # Move legend above plot
 
-HousePrices +
-  geom_histogram(aes(fill = as.factor(SIMDDecil)), colour = 'gray2', bins = 40) +
+HousePrice_SIMD +
   theme(legend.position = "top", legend.title=element_blank()) # Remove legend title
 
 # The formatting of the legend can also be adjusted in more detail
-HousePrices  +
-  geom_histogram(aes(fill = as.factor(SIMDDecil)), colour = 'gray2', bins = 40) +
+HousePrice_SIMD  +
   theme_bw() +
   theme(legend.position = "top", legend.title=element_text(colour = "white", size = 10, face="bold"), legend.text=element_text(colour = "white", size = 8), legend.background = element_rect(fill = "black"), legend.key = element_rect(fill = "black")) + labs(fill = "SIMD Deciles", x = "Avereage House Costs as a Percentage")
 # element_ allows specific non-data components of plots to be adjusted. eg. element_text for text and elecment_rect for borders and backgrounds
@@ -132,8 +136,8 @@ Histogram + labs(title="House Costs Change and SIMD", x="Average House Cost Chan
 browseURL("https://ggplot2.tidyverse.org/reference/labs.html")
 
 # Labels can also be added onto the plot itself
-Histogram + labs(title="House Costs Change and SIMD Deciles", x="Average House Cost Change", y="Number of Authorities", fill="SIMD Deciles") +
-  ggplot2::annotate(geom="label",x=c(14,20), y=c(4.2,1.5), label= c("Average Rise", "Higher Raises"), fill="black", colour=c("steelblue1", "tomato3"))
+Histogram + labs(title="House Costs Change and SIMD Deciles", x="Average House Cost Change (%)", y="Number of Authorities", fill="SIMD Deciles") +
+  ggplot2::annotate(geom="label",x=c(14,20), y=c(4.2,1.5), label= c("Average Increase", "Higher Increases"), fill="black", colour=c("steelblue1", "tomato3"))
  
 # annotate() allows labels to be added with the x and y position on the plot and the label itself required
 # rect can also be used to highlight a specific area
