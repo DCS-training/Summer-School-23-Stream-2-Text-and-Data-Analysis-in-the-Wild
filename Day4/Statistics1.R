@@ -30,7 +30,6 @@ summary(Scot_data$Housing_Increase)
 
 # 2. Exercise 1 ###########
 # 2.1 Summarising statistics of our data ========
-# Create a new column showing rent increase.
 
 # Look at mean median sum and Sd
 # mean calculates the mean, and so we can compare mean rent across Scotland between 2021 an 2022.
