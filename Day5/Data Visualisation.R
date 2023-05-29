@@ -158,7 +158,7 @@ Scatter_plot <- ggplot(Scot_data, aes(SIMD, life_expectancy_2022, shape = locati
                    point.padding = 0.4,
                    segment.color = 'grey50') # ggrepel allows labels to be added that won't clash with one another.
 
-Scatter_plot # Now we can see which specific authorities are the most deprived, with Glasgow City having the highest levels of deprivation and the lowest life exectancy.
+Scatter_plot # Now we can see which specific authorities are the most deprived, with Glasgow City having the highest levels of deprivation and the lowest life expectancy. (It might be easier to see if you click 'zoom').
 
 # 3.2.5. Colours ----------------------
 # The default colours in R aren't necessarily always the best options, but this too can be customized
@@ -255,14 +255,14 @@ spplot(Scot, zcol = 'SIMD') # Using sspolt, we can define a z column, which can 
 Scot$region <- as.factor(Scot$region) # Make sure region is a factor.
 spplot(Scot, zcol = 'region')
 
-# We can also again calcualte increase/decrease and look at % of increase/decrease of a factor
-Scot$homeless_1<-as.integer(Scot$homeless_1)# make sure is encoded as integer number
-Scot$homelessne<-as.integer(Scot$homelessne)# make sure is encoded as integer number
+# We can also again calculate increase/decrease and look at % of increase/decrease of a factor
+Scot$homeless_1 <- as.integer(Scot$homeless_1)# make sure is encoded as integer number
+Scot$homelessne <- as.integer(Scot$homelessne) # make sure is encoded as integer number
 Scot$HomelessIncrease <- ((Scot$homeless_1-Scot$homelessne)/Scot$homelessne)*100 # calculate %increase/decrease
 spplot(Scot, zcol = 'HomelessIncrease')
 
 # ==== Practical 4 ====
-# Try and visualise some of the factors we have looked at earlier in the day, but in a spatial format.
+# Play around and visualise some of the factors we have looked at earlier in the day, but in a spatial format.
 
 
 
@@ -274,7 +274,7 @@ library(gganimate)
 library(gifski)
 library(av)
 # Re-import file 
-uk_data_clean<-read_csv("Day5/data/TextDataVis.csv")
+uk_data_clean <- read_csv("Day5/data/TextDataVis.csv")
 
 ### 2.2.2 Data Wrangling ------------
 # Most Recurrent words each month 
@@ -287,6 +287,7 @@ uk_data_clean_G<-uk_data_clean%>%
 
 ### 2.2.3 Preprocess the text data (We are using tidytext)----------
 library(tidytext)
+library(textstem)
 processed_df <- uk_data_clean_G %>% # what I am using
   mutate(clean_text = tolower(clean_text)) %>% # lower all words
   unnest_tokens(word, clean_text) %>% # tokenise
