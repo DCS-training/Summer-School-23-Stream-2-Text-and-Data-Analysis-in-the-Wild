@@ -3,11 +3,9 @@
 ################################################################
 
 #### Packages ####
-library(ggdendro)
 library(tidyverse)
 library(ggplot2)
 library(ggfortify)
-library(MASS)
 
 #### Import Dataset ####
 authority_data_cleaned <- read_csv("Day3/DataWrangling/outputs/authority_data_cleaned.csv")
@@ -81,34 +79,3 @@ ggplot(kmeandata, aes(x=pc1, y=pc2, col=location)) +#use pc1 as x pc2 as y and c
   theme_bw()+# white background
   geom_label(aes(label = authority, hjust=0.5,vjust=0.5))
 
-#### Hierarchical Clustering ####
-
-#### Measuring pairwise distance between sites using the UPGMA ####
-distMeasures <- dist(measures)# calculate the distance matrix computed by using the specified distance measure and save this info in a new variable called distMeasures
-
-authorityHClust <- hclust(distMeasures, method="average")# Hierarchical cluster analysis usining average and save the result as a new object named sitesHclust
-
-
-#### Plotting results as a dendrogram ####
-authorityHClust$labels <- PCADataset$SIMDQuint #create a new variable named labels in our sitesHClust that will contain the info about the period form the sites dataframe 
-
-ggdendrogram(authorityHClust, rotate=T)+ 
-  labs(title = "Dendrogram of the differences in SIMD")#Plot the results using ggdendrogram 
-
-#### Machine Learning using Linear Discriminant Analysis ####
-
-daModel <- lda(location~FoodInsecurity+WelfareApp+Rent+Homeless, PCADataset)#using linear discriminant analysis that will group together the period and elevation with all the other info we have available and save it in a new object named daModel
-daModel #look what is inside the model we created
-
-prediction <- predict(daModel, PCADataset)#use the predict function to analyse the sites file. In the real word the file sites of course will not be the same that we used to create the model but it will be a new dataset that we want to analyse against the model
-
-
-daAuthority <- pcdata #again we copy the pcSites and name it daSites
-daAuthority$predicted <- prediction$class #we create a new variables named predicted that will take the analysis done by the predict function
-
-# We plot the results
-ggplot(daAuthority, aes(x=pc1, y=pc2, col=predicted)) + #using pc1 in x pc2 in y and colour coded by predicted 
-  geom_point() + # plot it as scatter plot
-  facet_wrap(~location)+ #subplot by period
-  theme_bw()+# use a white background
-  geom_label(aes(label = authority, hjust=0.5,vjust=0.5))

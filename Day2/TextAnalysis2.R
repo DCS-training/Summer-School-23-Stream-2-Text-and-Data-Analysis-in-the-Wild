@@ -39,7 +39,7 @@ SC_data_clean <- mutate_if(SC_data,
                            is.character, 
                            str_replace_all, 
                            pattern = 
-                           replacement = " ")
+                             replacement = " ")
 
 # We'll work with the UK data first, and then you'll repeat the process with the Scotland data on your own later in this block.
 # Subset the text column and save it as an object:
@@ -122,7 +122,7 @@ uk_lda_terms_2[1:10,]
 #Discuss the results with your table. From a human perspective, did removing extra words improve the topic modelling analysis?
 
 # Sentiment-category analysis with syuzhet:-------------------------------------
-SentimentScotlandText <-SC_data_clean$clean_text
+SentimentScotlandText <-SC_data_clean$texts
 sentiment_scores <- get_nrc_sentiment(SentimentScotlandText, lang="english")
 head(sentiment_scores)
 summary(sentiment_scores)

@@ -10,7 +10,6 @@
 library(quanteda)
 library(quanteda.textplots)
 library(quanteda.textmodels)
-library(ggplot2)
 library(lexicon)
 library(tidyverse)
 library (tm)
@@ -28,10 +27,10 @@ uk_data<-uk_data[, 2:4]
 head(uk_data$clean_text)
 # There are a lot of formatting errors (next line, next paragraph) that we want to clean up
 uk_data_clean <- mutate_if(uk_data, #change if is character so titles and texts
-                         is.character, 
-                         str_replace_all, 
-                         pattern = "\r?\n|\r", #What I am searching
-                         replacement = " ")#What I am replacing with
+                           is.character, 
+                           str_replace_all, 
+                           pattern = "\r?\n|\r", #What I am searching
+                           replacement = " ")#What I am replacing with
 
 # Which will insert only one space regardless whether the text contains \r\n, \n or \r.
 # Let's check again 
@@ -80,9 +79,9 @@ ggplot(BreakoutUK, aes(x=MonthYear, y=NArticles))+ # Select data set and coordin
 # 5. Tokenise the Corpus =================
 # Now we can tokenise the corpus 
 article_tokens <- quanteda::tokens(article_text, 
-                         remove_symbols=TRUE, 
-                         remove_url=TRUE, 
-                         remove_punct=TRUE)
+                                   remove_symbols=TRUE, 
+                                   remove_url=TRUE, 
+                                   remove_punct=TRUE)
 
 # Remove tokens under 3 characters:
 article_tokens <- tokens_select(article_tokens, min_nchar = 3)

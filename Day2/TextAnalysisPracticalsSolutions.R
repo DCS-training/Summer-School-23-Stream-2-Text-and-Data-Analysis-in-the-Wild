@@ -87,12 +87,12 @@ ggplot(TotBreakout, aes(x=MonthYear, y=NArticles))+ # Select data set and coordi
 
 #tokenise the corpus 
 article_tokens_SC <- quanteda::tokens(article_text_SC, 
-                         remove_symbols=TRUE, 
-                         remove_url=TRUE, 
-                         remove_punct=TRUE)
+                                      remove_symbols=TRUE, 
+                                      remove_url=TRUE, 
+                                      remove_punct=TRUE)
 
 #remove tokens under 3 characters:
-article_tokens_SC <- tokens_select(article_tokens_SC, min_nchar = 3)
+article_tokens_SC <- quanteda::tokens_select(article_tokens_SC, min_nchar = 3)
 
 
 #keyword search examples (using kwic aka "keyword in context")
@@ -185,4 +185,3 @@ barplot(
   main = "Sentiment by Category: Scotland Data",
   xlab="category", ylab = 'frequency')
 
-     
