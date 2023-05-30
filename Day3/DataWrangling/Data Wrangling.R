@@ -129,7 +129,7 @@ summary(SIMD)# Good to go
 
 
 # 4. Practical 1 ==========================
-# Create a new column in authority_data that shows the difference between foodbank_parcels in 2021 and 2022, and check whether there was an overall increase or decrease. Use SSch$Foodbank_difference <- to assign a new column. Note how the presence of null values impact this 
+# Create a new column in authority_data that shows the difference between foodbank_parcels in 2021 and 2022, and check whether there was an overall increase or decrease. Use authority_data$Foodbank_difference <- to assign a new column. Note how the presence of null values impact this 
 
 
 # 5. Combining Data sets ==========================
@@ -142,7 +142,12 @@ SIMD$Council_area <- as.factor(SIMD$Council_area) # Changing the data type to a 
 
 Councils <- SIMD %>% 
                 group_by(Council_area) %>% 
-                summarize(Population=sum(Total_population))
+                summarize(Population=sum(Total_population),
+                          SIMDQuint=as.factor(floor(mean(SIMD2020v2_Quintile))),
+                          SIMDDecil=as.factor(floor(mean(SIMD2020v2_Decile))),
+                          Alcohol= round(mean(ALCOHOL)),
+                          PT_GP=round(mean(PT_GP)))
+
 
 ## 5.2 Practical 2 -------------
 # Try to add the mean SIMD2020v2_Rank as a new column in the new Councils data frame. You will need to use group_by again.
@@ -187,8 +192,8 @@ authority_data$Business<- round(((authority_data$businesses_2022-authority_data$
 authority_data$Foodbank<-round(((authority_data$foodbank_parcels_2022-authority_data$foodbank_parcels_2021)/authority_data$foodbank_parcels_2021)*100,2)
 # Average rent
 authority_data$Rent<-round(((authority_data$average_rent_2022-authority_data$average_rent_2021)/authority_data$average_rent_2021)*100,2)
-## 7.2. Subset only the column I want ------------
-authority_data_cleaned<-authority_data[,c(1:3,6,13,14,22:28)]# Nice cleaned data set for tomorrow
+## 7.2. Subset only the column I want ------------:
+authority_data_cleaned<-authority_data[,c(1:3,6,13,15,21:29)]# Nice cleaned data set for tomorrow
 ## 7.3. Add variables to SIMD ---------- 
 # Add some variables from the SIMD Data set 
 FromSIMD <- SIMD %>% 

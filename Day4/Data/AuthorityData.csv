@@ -1,33 +1,33 @@
-authority,location,region,FoodInsecurity,WelfareApp,Rent,Homeless
-Aberdeen City,Urban,north_east,25,-15.5,2.2,10.5
-Aberdeenshire,Rural,north_east,0,4.8,2.2,6
-Angus,Rural,east,-11.1,-5.2,7.8,1
-Argyll and Bute,Rural,highlands_islands,16.7,1.5,5,5.7
-City of Edinburgh,Urban,east,-14.3,-2.9,6.8,3.6
-Clackmannanshire,Urban,east,0,-4.8,8.6,33.3
-Dumfries and Galloway,Rural,south_west,-18.2,0.3,0.6,3
-Dundee City,Urban,east,-9.1,3.7,7.8,26.7
-East Ayrshire,Urban,south_west,0,4.5,-1.4,26
-East Dunbartonshire,Urban,south_west,0,-3.1,8.2,2.8
-East Lothian,Rural,east,0,9,6.8,5.4
-East Renfrewshire,Urban,south_west,0,3.4,5.6,41.5
-Falkirk,Urban,east,0,0.1,8.6,10.7
-Fife,Rural,east,0,1.2,5.4,3.9
-Glasgow City,Urban,south_west,0,1.8,7.7,4.8
-Highland,Rural,highlands_islands,-25,7.8,5.1,-12.9
-Inverclyde,Urban,south_west,12.5,-10.1,5.6,21.3
-Midlothian,Rural,east,12.5,2.5,6.8,-0.9
-Moray,Rural,highlands_islands,16.7,11.4,5.1,-3.6
-Na h-Eileanan Siar,Rural,highlands_islands,0,2.3,5.1,23.3
-North Ayrshire,Rural,south_west,14.3,2.8,-1.4,5.5
-North Lanarkshire,Urban,south_west,-7.1,3.8,8.3,11.3
-Orkney Islands,Rural,highlands_islands,0,-4.4,5.1,-18
-Perth and Kinross,Rural,east,-16.7,-1.6,6.1,-8.1
-Renfrewshire,Urban,south_west,16.7,3.3,5.6,4.4
-Scottish Borders,Rural,east,0,-0.2,1.7,3.2
-Shetland Islands,Rural,highlands_islands,-16.7,2,5.1,4.5
-South Ayrshire,Rural,south_west,0,7.8,-1.4,9.7
-South Lanarkshire,Rural,south_west,0,3,10.3,3.1
-Stirling,Rural,east,0,2.2,8.6,3.6
-West Dunbartonshire,Urban,south_west,33.3,-2.8,8.4,1.5
-West Lothian,Urban,east,42.9,1.7,4.8,-11.9
+authority,location,region,life_expectancy_2022,average_household_gas_consumption_kwh_2021,businesses_2021,average_energy_bill_2021,Foodbank_difference,FoodInsecurity,HousePrices,WelfareApp,Homeless,Business,Foodbank,Rent,Population,SIMDQuint,SIMDDecil,Alcohol,PT_GP
+Aberdeen City,Urban,north_east,76.9,13433.50335,4525,1301.606933,-459,25,6.03,-15.47,10.49,-10.94,-12.61,2.16,228800,3,6,107,8
+Aberdeenshire,Rural,north_east,78.77,15681.06284,7620,1614.001076,-1113,0,11.3,4.76,5.99,-5.71,-11.47,2.16,261800,3,7,45,15
+Angus,Rural,east,78.22,13856.21879,1825,1434.551407,30,-11.11,19.26,-5.17,0.97,-3.29,0.83,7.82,116280,3,5,55,14
+Argyll and Bute,Rural,highlands_islands,77.7,15099.56687,2030,1854.221537,NA,16.67,0.85,1.49,5.69,0.49,NA,4.97,86810,3,5,109,14
+City of Edinburgh,Urban,east,77.95,12430.14442,10160,1315.316731,-11793,-14.29,10.22,-2.92,3.62,-6.89,-39.85,6.79,513210,3,6,84,7
+Clackmannanshire,Urban,east,75.32,12829.4737,430,1847.455602,NA,0,7.46,-4.76,33.26,-1.16,NA,8.57,51450,2,4,80,10
+Dumfries and Galloway,Rural,south_west,77.39,13400.92795,3260,1739.150558,244,-18.18,11.09,0.32,3.01,0.61,9.12,0.63,149200,2,5,65,13
+Dundee City,Urban,east,73.53,12555.38204,1260,1453.49039,32,-9.09,11.88,3.66,26.67,0,0.25,7.82,148710,2,4,102,9
+East Ayrshire,Urban,south_west,74.88,16636.83909,1335,1525.793391,-2873,0,14.53,4.48,26.03,-2.25,-33.24,-1.4,121940,2,4,104,11
+East Dunbartonshire,Urban,south_west,80.01,16636.83909,1195,1564.23939,-472,0,19.81,-3.13,2.77,-7.95,-8.8,8.18,108130,3,7,69,11
+East Lothian,Rural,east,78.87,13129.56931,1495,1814.243318,1614,0,14.07,8.97,5.42,-5.35,23.22,6.79,104840,3,6,64,10
+East Renfrewshire,Urban,south_west,79.39,17274.03265,1170,1267.90957,44,0,12.3,3.4,41.5,-6.84,1.08,5.6,94760,4,7,63,9
+Falkirk,Urban,east,76.21,13269.92982,1430,1297.210737,232,0,15.47,0.07,10.71,-9.09,3.07,8.57,160130,2,5,79,10
+Fife,Rural,east,76.85,13565.76475,3815,1491.445988,-1533,0,13.75,1.24,3.88,-7.21,-9.39,5.36,371410,3,5,95,9
+Glasgow City,Urban,south_west,72.94,11068.74212,8330,1452.271062,-3059,0,8.81,1.78,4.81,-2.34,-9.31,7.65,621020,2,3,NA,7
+Highland,Rural,highlands_islands,77.56,13701.26785,5330,1258.915212,-2173,-25,9.64,7.75,-12.93,-0.28,-28.22,5.07,235180,3,5,99,17
+Inverclyde,Urban,south_west,74.05,13438.00568,645,1441.267949,-683,12.5,5.18,-10.11,21.28,-6.2,-11.25,5.6,78760,2,4,162,10
+Midlothian,Rural,east,77.56,12936.34836,965,1373.267392,1318,12.5,9.39,2.46,-0.93,-4.15,30.35,6.79,90090,2,5,85,11
+Moray,Rural,highlands_islands,78.26,14158.45172,1520,1481.15347,NA,16.67,14.23,11.42,-3.63,-1.97,NA,5.07,95780,3,6,75,14
+Na h-Eileanan an Iar,Rural,highlands_islands,77.9,12129.79779,660,1255.056081,NA,0,11.94,2.3,23.28,2.27,NA,5.07,26950,2,5,109,17
+North Ayrshire,Rural,south_west,74.45,12529.3955,1335,1307.089429,-3421,14.29,15.6,2.81,5.45,-8.24,-54.69,-1.4,135790,2,4,126,9
+North Lanarkshire,Urban,south_west,74.14,13340.47792,2385,1138.683625,-1755,-7.14,13.13,3.77,11.32,-4.82,-29.36,8.32,339960,2,4,129,10
+Orkney Islands,Rural,highlands_islands,80.4,NA,935,1250.351553,-427,0,26.86,-4.44,-18,2.67,-31.24,5.07,22000,3,6,111,15
+Perth and Kinross,Rural,east,78.86,14380.18003,2870,1277.327702,1389,-16.67,11,-1.63,-8.07,0,25.82,6.1,151100,3,6,57,13
+Renfrewshire,Urban,south_west,75.53,12503.01786,1785,1282.46208,-1354,16.67,11,3.32,4.38,-7,-14.57,5.6,176830,2,5,140,10
+Scottish Borders,Rural,east,79.06,13489.96738,2475,1267.452687,-121,0,7.27,-0.16,3.24,0.61,-10.31,1.74,115020,3,5,65,13
+Shetland Islands,Rural,highlands_islands,79.62,NA,990,1200.794947,-378,-16.67,12.94,2,4.55,1.52,-28.15,5.07,23080,3,6,95,20
+South Ayrshire,Rural,south_west,76.4,13826.10569,1520,1449.592766,452,0,11.14,7.79,9.69,-2.96,7.69,-1.4,112680,3,5,107,10
+South Lanarkshire,Rural,south_west,75.88,14134.04917,3415,1339.119605,-771,0,13.03,3,3.15,-4.54,-5.5,10.25,318170,2,5,105,11
+Stirling,Rural,east,77.39,14808.49355,1820,1361.668903,NA,0,14.77,2.25,3.64,-3.02,NA,8.57,94000,3,6,62,11
+West Dunbartonshire,Urban,south_west,73.42,11422.32822,685,1151.287796,NA,33.33,16.45,-2.76,1.46,-6.57,NA,8.38,89610,2,3,152,11
+West Lothian,Urban,east,77.14,13673.65394,1805,1302.255812,1400,42.86,13.75,1.7,-11.86,-10.53,13.81,4.83,181310,2,5,97,10

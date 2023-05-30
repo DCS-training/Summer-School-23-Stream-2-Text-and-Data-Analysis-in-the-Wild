@@ -1,7 +1,7 @@
 # #### Practical Solutions ####
 
 # ==== 1 ====
-# Create a new column in authority_data that shows the difference between foodbank_parcels in 2021 and 2022, and check whether there was an overall increase or decrease. Use SSch$Foodbank_difference <- to assign a new column. You will need to tidy the data in the 2021 column
+# Create a new column in authority_data that shows the difference between foodbank_parcels in 2021 and 2022, and check whether there was an overall increase or decrease. Use authority_data$Foodbank_difference <- to assign a new column. You will need to tidy the data in the 2021 column
 authority_data$Foodbank_difference <- authority_data$foodbank_parcels_2022-authority_data$foodbank_parcels_2021 # Calculate the difference between the two years.
 
 (sum(authority_data$foodbank_parcels_2022, na.rm = T)-sum(authority_data$foodbank_parcels_2021, na.rm = T)) # Calulate overall difference between the two years. There were 27582 less foodbank parcels in 2022 compared to 2021.
@@ -40,13 +40,4 @@ Merged_data$PT_GP <- Council_PT_GP$PT_GP
 
 # The more deprived councils don't necessarily seem to have longer journey time by public transport to a GP.
 
-# ==== 6 ====
-# Create a new column with the rate of alcohol abuse amongst the working age population in each authority.Use the Working_age_population and ALCOHOL columns in the SIMD dataset to calculate this, and add it to the Merged_data. (Note there are some NA values in the ALCOHOL column).
-
-Council_alc_pop <-   SIMD %>% 
-  group_by(Council_area) %>% 
-  summarize(Alcohol = sum(ALCOHOL, na.rm = T),
-            Work_pop = sum(Working_Age_population))
-
-Merged_data$Alcohol <- Council_alc_pop$Alcohol/Council_alc_pop$Work_pop
 
