@@ -14,8 +14,8 @@ library(tm)
 
 # 2. Overall sentiment (Scotland vs. UK)===================
 ## 2.1. Import data -------------------
-SentimentScotland <- read_csv("day3/SentimentAnalysis/data/scotland_data.csv")
-SentimentUK <- read_csv("day3/SentimentAnalysis/data/uk_senti.csv")
+SentimentScotland <- read_csv("Day3/SentimentAnalysis/data/scotland_data.csv")
+SentimentUK <- read_csv("Day3/SentimentAnalysis/data/uk_senti.csv")
 
 ## 2.2. Calculate sentiment scores with VADER --------
 scot_scores <- SentimentScotland$selftext %>%

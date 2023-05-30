@@ -14,8 +14,8 @@ library("sjPlot")
 library("ggfortify")
 
 ## 1.2. Import the data sets ===========
-Scot_data <- read_csv("Day3/DataWrangling/outputs/Full_Scottish_Data.csv")
-authority_data<-read_csv("Day3/DataWrangling/outputs/authority_data_cleaned.csv")
+Scot_data <- read_csv("Day4/data/Full_Scottish_Data.csv") 
+authority_data<-read_csv("Day4/data/AuthorityData.csv")
 
 ## 1.3. Get to know our data ===========
 head(Scot_data)
