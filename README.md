@@ -2,7 +2,7 @@
 Welcome to the CDCS Data and Text analysis Summer School Stream 2 Repo. Here you will be able to access all the material, data, and instructions connected to the school.
 
 ## Content of the Repository
-Each day has its own folder and within each folder you can find a data file/folder and the code that will be used during the class.
+Each day of the Summer School has its own folder. Within each day, you will find a folder for each block containing a data file/folder and the code that will be used during the class.
 
 ## Summer School Time Table
 | |MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|
