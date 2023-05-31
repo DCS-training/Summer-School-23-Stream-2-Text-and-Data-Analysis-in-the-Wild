@@ -113,6 +113,7 @@ ByMonthYearTotal<-FullDataSet%>%
 gradient <- colorRampPalette(c("red", "green"))
 ggplot(ByMonthYearScotland, aes(x = MonthYear, y = meanSent, colour=meanSent)) +
   geom_path(aes(group=1), colour="black", size=1)+
+  geom_hline(yintercept=0, linetype='dotted')+
   geom_point(size = 7) +
   scale_colour_gradientn(colours = gradient(10)) +
   labs(title='r/Scotland VADER Compound Sentiment', x = "Post Date", y = "Sentiment Score") +
@@ -122,25 +123,27 @@ ggplot(ByMonthYearScotland, aes(x = MonthYear, y = meanSent, colour=meanSent)) +
 ### 3.2.2. UK ------------
 # Define my gradient 
 gradient <- colorRampPalette(c("red", "green"))
-ggplot(ByMonthYearTotal, aes(x = MonthYear, y = meanSent, colour=meanSent)) +
-  geom_path(aes(group=1), colour="black", size=1)+
-  geom_point(size = 7) +
-  scale_colour_gradientn(colours = gradient(10)) +
-  labs(title='r/Scotland VADER Compound Sentiment', x = "Post Date", y = "Sentiment Score") +
-  theme_minimal()+
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
-  facet_wrap(~dataset, ncol=1)
-
-### 3.2.3. Full Data set ------------
-# Define my gradient 
-gradient <- colorRampPalette(c("red", "green"))
 ggplot(ByMonthYearUK, aes(x = MonthYear, y = meanSent, colour=meanSent)) +
   geom_path(aes(group=1), colour="black", size=1)+
   geom_point(size = 7) +
   scale_colour_gradientn(colours = gradient(10)) +
+  geom_hline(yintercept=0, linetype='dotted')+
   labs(title='r/Scotland VADER Compound Sentiment', x = "Post Date", y = "Sentiment Score") +
   theme_minimal()+
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+### 3.2.3. Full Data set ------------
+# Define my gradient 
+gradient <- colorRampPalette(c("red", "green"))
+ggplot(ByMonthYearTotal, aes(x = MonthYear, y = meanSent, colour=meanSent)) +
+  geom_path(aes(group=1), colour="black", size=1)+
+  geom_point(size = 7) +
+  scale_colour_gradientn(colours = gradient(10)) +
+  geom_hline(yintercept=0, linetype='dotted')+
+  labs(title='r/Scotland VADER Compound Sentiment', x = "Post Date", y = "Sentiment Score") +
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+  facet_wrap(~dataset, ncol=1)
 
 
 # Discuss the stats, top tiles, and plots with your table. What do/don't they show us? What might the pros and cons of our data sets be?
@@ -160,7 +163,7 @@ ggplot(Scotland23, aes(x = date, y =Sentiment, colour=Sentiment)) +
   scale_colour_gradientn(colours = gradient(10)) +
   labs(title='r/Scotland VADER Compound Sentiment', x = "Post Date", y = "Sentiment Score") +
   theme_minimal()+
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  geom_hline(yintercept=0, linetype='dotted')
 
 #With your table, create a plot for a subset of your choice (e.g. r/UK posts from 2022, r/Scotland posts with compound >=0.5, etc). Discuss your findings
 #Then, share your plot with the class.

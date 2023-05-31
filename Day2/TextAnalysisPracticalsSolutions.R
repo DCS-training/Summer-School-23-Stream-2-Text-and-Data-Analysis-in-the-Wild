@@ -185,3 +185,4 @@ barplot(
   main = "Sentiment by Category: Scotland Data",
   xlab="category", ylab = 'frequency')
 
+# Exercise on 

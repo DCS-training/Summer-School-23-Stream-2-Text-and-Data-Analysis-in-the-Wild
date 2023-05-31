@@ -52,7 +52,7 @@ nchar(article_text[1:10])
 ntoken(article_text[1:10]) 
 
 ## 4.1 Visualise these results --------------
-# Create a new vector with tokens for all articles and store the vector as a new dataframe with three columns (Ntoken, Dataset, Date)
+# Create a new vector with tokens for all articles and store the vector as a new data frame with three columns (Ntoken, Dataset, Date)
 NtokenUK<-as.vector(ntoken(article_text))
 TokenUK <-data.frame(Tokens=NtokenUK, Dataset="UK", Date=uk_data_clean$dates)
 # Let's explore the number of articles published and their length to see if we can answer research question #1.
