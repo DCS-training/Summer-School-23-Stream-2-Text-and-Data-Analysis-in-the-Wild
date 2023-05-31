@@ -6,8 +6,8 @@
 library(tidyverse)
 ## 1.2 Import the data sets ===========
 Scot_data <- read_csv("Day5/data/Full_Scottish_Data.csv")
-Scot_data$Deprivation <-ifelse(Scot_data$SIMD>=median(Scot_data$SIMD),"least","most")# We are going to need one more binary variable that will divide our dataset in most deprived/less deprived based on the median
-authority_data<-read_csv("Day5/data/authority_data_cleaned.csv")
+
+authority_data<-read_csv("Day5/data/AuthorityData.csv")
 
 # 2. Basic Visualisation ################
 # Base R has a series of ways to visualise data.
@@ -17,7 +17,7 @@ authority_data<-read_csv("Day5/data/authority_data_cleaned.csv")
 str(authority_data) # Basic structural information of the data set
 head(authority_data) # View the first 10 observations
 tail(authority_data) # View the last 15 observations
-summary(authority_data) # More detailed summary of the data. This saves using individual functions for each column eg.-mean(airquality$Temp)
+summary(authority_data) # More detailed summary of the data. This saves using individual functions for each column eg.-mean(authority_data$Alcohol)
 
 View(authority_data) # A more user friendly view of the data frame (you can also click on the variable in the environment)
 
@@ -45,7 +45,8 @@ help(ggplot)
 
 ## 3.1 Basic Syntax ======================
 # Lets visualise the same scatter plot above using ggplot/
-ggplot(Scot_data, aes(x= SIMD, y= life_expectancy_2022)) + geom_point() # While this may seem slightly more complicated than basic plot functions for a very similar result, it allows far more customization and the syntax is actually fairly straightforward
+ggplot(Scot_data, aes(x= SIMD, y= life_expectancy_2022)) +
+  geom_point() # While this may seem slightly more complicated than basic plot functions for a very similar result, it allows far more customization and the syntax is actually fairly straightforward
 
 # ggplot syntax follows the 'grammar of graphics'. See-
 browseURL("https://r-unimelb.gitbook.io/rbook/putting-the-r-in-art/ggplot2-and-the-grammar-of-graphics")
@@ -211,14 +212,14 @@ ggplot(Scot_data, aes(x= Deprivation, y= life_expectancy_2022, fill= location)) 
 
 boxplot.stats(Scot_data$life_expectancy_2022)
 
-###### PART 2: Practicals 1 ######
-# ==== Practical 1 ====
+###### PART 2: Exercises ######
+# Exercise 1 ====
 # Try to visualise any correlation between average gas consumption and energy bills. Compare the most and least deprived areas as well as the urban/rural divide.
 
-# ==== Practical 2 ====
+# Exercise  2 ====
 # Visualise the difference in journey times using public transport to a GP. Look at regional differences.
 
-# ==== Practical 3 ====
+# Exercise  3 ====
 # Expand on the above, but divide by rural and urban.
 
 ###### PART 3: Advanced Data Visualisation ######
@@ -261,7 +262,7 @@ Scot$homelessne <- as.integer(Scot$homelessne) # make sure is encoded as integer
 Scot$HomelessIncrease <- ((Scot$homeless_1-Scot$homelessne)/Scot$homelessne)*100 # calculate %increase/decrease
 spplot(Scot, zcol = 'HomelessIncrease')
 
-# ==== Practical 4 ====
+# Exercise 4 ====
 # Play around and visualise some of the factors we have looked at earlier in the day, but in a spatial format.
 
 

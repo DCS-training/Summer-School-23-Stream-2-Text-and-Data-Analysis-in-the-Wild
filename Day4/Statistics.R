@@ -222,7 +222,7 @@ summary(model3)
 
 ## 3.4. Exercise 3 --------------
 # We need to check against Deprivation to answer RQ4.
-# RQ4. Is Deprivation (measured as SIMD) associated with increase of house price? ========
+# RQ4. Is Deprivation (measured as SIMD) associated with increase of house price? 
 # Can you try to plot the relation between Housing_Increase and SIMD ?
 # Can you fit a regression model to test this statistically and interpret the results? 
 
@@ -266,6 +266,21 @@ two_sample_ttest <- t.test(Scot_data$average_rent_2022, Scot_data$average_rent_2
 
 print(two_sample_ttest) # Our p value is significantly larger than 0.05, and so the Null Hypothesis cannot be rejected.
 
+# One thing we should have done is to check if our variables are normalised.T-test is a parametric test so it should be applied on normalised data. However is a quite robust test so we can try use it anyway
+
+# Print the two curves
+ggplot(Scot_data, aes(x=average_rent_2022))+ geom_density(alpha=0.5,fill="red") +
+  theme_bw()
+
+ggplot(Scot_data, aes(x=average_rent_2021))+ geom_density(alpha=0.5, fill="blue") +
+  theme_bw()
+
+# Are them normalised? well...
+# We can try with a non parametric test the Kolmogorov–Smirnov test
+ks.test(Scot_data$average_rent_2022,Scot_data$average_rent_2021)
+
+# Is the result different?
+
 # We can also use this to see if specific factors make a difference. For example, is the increase in food insecurity significantly higher between urban and rural authorities.
 
 ### 4.1.2 Compare Urban vs Rural--------------
@@ -280,9 +295,21 @@ mean(Rural$FoodInsecurity)
 mean(Urban$FoodInsecurity)
 
 # Rural Food insecurity decreased while the urban food insecurity increase. The Null Hypothesis is that the Urban and Rural distinction is not a significant factor in this pattern. We can use a t.test to try and reject this Null Hypothesis.
+
+# Before that we need to check if they are normalised
+ggplot(authority_data_cleaned, aes(x=FoodInsecurity, fill=location))+ geom_density(alpha=0.5) +
+  theme_bw()
+
+# Do you think it is normalised? T-test is a parametric test so it should be applied on normalised data. However is a quite robust test so we can try use it anyway
+
 two_sample_ttest <- t.test(Rural$FoodInsecurity, Urban$FoodInsecurity)
 
 print(two_sample_ttest) # So even if the means are very different Again, we cannot reject the Null Hypothesis.
+
+# what happen when we try use the KS test that is non parametric
+ks.test(Urban$FoodInsecurity,Rural$FoodInsecurity)
+
+# How the result differ from the t-test?
 
 ### 4.1.3 Exercise 5------------------
 
@@ -297,7 +324,6 @@ print(two_sample_ttest) # So even if the means are very different Again, we cann
 mean(authority_data_cleaned$Rent) # Rent raise seems lower, but is this statistically significant?
 
 t.test(authority_data_cleaned$Rent, mu = 9.5) # With a p value below 0.05, the Null Hypothesis can be rejected, and it seems there is a significant difference between Scotland raise in rent and general UK one (note these are imperfect data, with the Scottish sample include the whole 2022).
-
 
 ## 4.3 ANOVA Tests ===================================
 # ANOVA tests can determine the impact of an independent variable on a quantitative dependent variable of a data set. 
