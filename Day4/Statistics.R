@@ -4,6 +4,7 @@
 # 1.1. does the average energy bill impact it?
 # 1.2. Is alcohol consumption associated with the increase of house price?
 # 1.3.Is the increase of house price dependent of location (Rural vs Urban)?
+# 1.4
 
 # 1. Getting Set ###########
 ## 1.1. Packages we need ==========
@@ -37,7 +38,7 @@ summary(Scot_data$Housing_Increase)
 
 ## 2.2. Exercise 1 =====================
 # Summarising statistics of our data:
-# Create a new column showing rent increase
+# Create a new column showing house prices increase
 
 
 ## 2.3. Mean Median Sum and SD ==================
