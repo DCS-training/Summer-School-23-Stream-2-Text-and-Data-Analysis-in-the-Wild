@@ -8,6 +8,7 @@
 
 # 1. Getting Set ###########
 ## 1.1. Packages we need ==========
+install.packages("ggfortify")
 library("tidyverse")
 library("lme4")
 library("ggfortify")
