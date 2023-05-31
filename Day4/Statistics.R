@@ -1,23 +1,22 @@
 ############### STATISTICAL ANALYSIS #######################
 # RESEARCH QUESTIONS
-# 1. Which factor is associated with the increase of house price?
-# 1.1. does the average energy bill impact it?
-# 1.2. Is alcohol consumption associated with the increase of house price?
-# 1.3.Is the increase of house price dependent of location (Rural vs Urban)?
+# Which factor is associated with the increase of house price?
+# RQ1. Is the increase of house price associated with Energy bill?
+# RQ2. Is the increase of house price associated with Alcohol Consumption?
+# RQ3. Is the increase of house price associated with Location (Rural vs Urban)?
+# RQ4. Is Deprivation (measured as SIMD) associated with increase of house price?
 
 # 1. Getting Set ###########
 ## 1.1. Packages we need ==========
 library("tidyverse")
 library("lme4")
-library("effects")
-library("sjPlot")
 library("ggfortify")
 
 ## 1.2. Import the data sets ===========
 Scot_data <- read_csv("Day4/data/Full_Scottish_Data.csv") 
 authority_data<-read_csv("Day4/data/AuthorityData.csv")
 
-## 1.3. Get to know our data ===========
+## 1.3. Quick glance at the data ===========
 head(Scot_data)
 str(Scot_data)
 
@@ -25,24 +24,24 @@ head(authority_data)
 str(authority_data)
 
 # 2. Descriptive Stats ######
+
 ## 2.1. Data cleaning and data wrangling ===========
 
 # Set categorical variables as factors
 Scot_data$location <-as.factor(Scot_data$location)
 levels(Scot_data$location)
 
-# Create new columns for housing increase. We just need to subtract "house_price_jul_21" from "house_price_jul_22".
+# Add a new column for housing increase. We just need to subtract "house_price_jul_21" from "house_price_jul_22".
 Scot_data$Housing_Increase <- Scot_data$house_price_jul_22 -  Scot_data$house_price_jul_21
 summary(Scot_data$Housing_Increase)
 
 ## 2.2. Exercise 1 =====================
-# Summarising statistics of our data:
-# Create a new column showing rent increase
+# Can you add a new column to show rent increase? 
 
-
-## 2.3. Mean Median Sum and SD ==================
+## 2.3. Describe central tendency 
+# To describe central tendency, we can use Mean, Median, and SD. Sometimes it is also useful to have the total number, for that we use Sum.==================
 ### 2.3.1. Mean ------------
-# Mean calculates the mean, and so we can compare mean rent across Scotland between 2021 an 2022.
+# Mean calculates the mean, and so we can compare mean house price across Scotland between 2021 an 2022.
 mean(Scot_data$average_rent_2021)
 mean(Scot_data$average_rent_2022)
 # This suggests rent is increasing.
@@ -52,40 +51,40 @@ mean(Scot_data$average_rent_2022)
 median(Scot_data$welfare_applications2020_2021)
 median(Scot_data$welfare_applications2021_2022)
 
-### 2.3.3. Sum ------------
+### 2.3.3. SD ------------
+# sd can be used to calculate the standard deviation of data set. This can be helpful to understand how different each observation is across the data set.
+sd(Scot_data$average_energy_bill_2021) 
+mean(Scot_data$average_energy_bill_2021) # This is quite a small value compared to the mean, and so energy bills seem quite consistent across authorities.
+
+
+### 2.3.4. Sum ------------
 # We can also just sum data if we want totals.
 sum(Scot_data$homelessness_applications2020_21)
 sum(Scot_data$homelessness_applications2021_2022)
 # This shows an increase in welfare and homelessness applications.
 
-### 2.3.4. SD ------------
-# sd can be used to calculate the standard deviation of data set. This can be helpful to understand how different each observation is across the data set.
-sd(Scot_data$average_energy_bill_2021) 
-mean(Scot_data$average_energy_bill_2021) # This is quite a sma#ll value compared to the mean, and so energy bills seem quite consistent across authorities.
 
 ## 2.4 Summarise our observations =================
-# Summarise the factors of our interest into a table
-# Ssummary statistics for housing_increase,  rent_increase, average_energy_bill_2021 into a table
+# Summarise the factors of our interest into a table using %>%
+# in this way, we can create different slices of our data.
+# For example the flowing code gave you summary statistics for housing_increase, rent_increase, average_energy_bill_2021 within one table
 housing_summary <- Scot_data %>% 
   summarise(Average_Housing_increase = mean(Housing_Increase), 
     Average_Rent_increase = mean(Rent_Increase), 
     Average_Energy_bill_in_2021 = mean(average_energy_bill_2021), 
   )
-# we can create different slices of our data this way
-summary_stats <- Scot_data %>%
-  summarize(
-    Mean_population = mean(Population),
-    Median_SIMD = median(SIMD),
-    SD_Food_insc = sd(food_insecurity2018_2022)
-  )
+
+## 2.5. Exercise 2 =====================
+# Can you provide summary statistics to show the mean of Population, the median of SIMD, and the sd of food_insecurity2018_2022?
+
 
 # 3. Regression #######
-# Which factor is associated with the increase of house price? 
+# To answer our research questions, we build simple regression models to investigate which factor is associated with the increase of house price.
 
-## 3.1. Check against a specific factor ============
-# Is energy bill associated with the increase of house price? 
+## 3.1. Check Against Energy Bill
+# RQ1. Is energy bill associated with the increase of house price? 
 
-# We first try to visualise the data. We can plot the relation using geom_smooth() function and specify method as "lm". e.g., geom_smooth(method = "lm", se=TRUE)
+# First, we try to visualise the data. We can plot the relation using geom_smooth() function and specify method as "lm". e.g., geom_smooth(method = "lm", se=TRUE)
 
 ### 3.1.1 Plot the relation -------------
 # Consider using geom_smooth() to superimpose the best-fitting line describing the association of interest
@@ -97,39 +96,49 @@ ggplot(data = Scot_data,
   labs(x= "average_energy_bill_2021",
        y = "House Price Increase from 2021-2022",
   )
-
 # It looks like energy bill is not associated with housing price change. This make sense cause we do not have the data of 2022 yet
-### 3.1.2. Regression model for Energy --------------
-# Let's test this in a regression model. To fit a regression model with a continuous outcome variable, we can use the lm() function from the "lme4" package. If the outcome variable is not continuous, you use different formulas. Due to limited time, we will not cover those in this workshop.
+
+### 3.1.2. Fit a model --------------
+# Let's test this in a regression model. To fit a regression model with a continuous outcome variable, we can use the lm() function from the "lme4" package. Note that if the outcome variable is not continuous, you use different formulas. Due to limited time, we will not cover those in this workshop.
 
 # Fit a regression model including energy bill as a predictor, using lm() function.
 model1 <- lm (Housing_Increase ~ average_energy_bill_2021, data = Scot_data)
 summary(model1)
 
+### 3.1.3 Interpret the Results -----------------
+
+# What is the intercept? 
 # Intercept is the expected value of Y (the outcome variable) when X (the predictor) is 0.
 
-# The intercept of the model tells us that the expected house price increase in Scotland between 2021 and 2022 is £31466.38, when energy bill in 2021 was 0. It is significant (P <.05), suggesting that price increase differs among different areas. 
+# What is the slope?
+# Slope is the number of units by which Y (the outcome variable) increases on average, as X (the predictor variable) increases by a unit. In this case, the slope shows that energy bill increases by 1 unit, the expected increase of house price increased by -£1,436, or decreases by £1,436. HOWEVER, the results is insignificant (p = .39), suggesting that house price increase is not associated with energy bill.
 
-# But is it meaningful to consider price increase when energy bill is 0?
+# The intercept of the model tells us that the expected house price increase in Scotland between 2021 and 2022 is £31466.38, when energy bill in 2021 was 0.
+# It is significant (P <.05), suggesting that the increase of house price increase varied. 
+
+# But energy bill is unlikely to be 0 if it is a house that people want to buy or rent, thus this intercept is not very informative.
+# Can we make the intercept more meaningful? 
+# for example, a more meaning intercept would represent the expected value of house in crease, when energy bill is the mean rather than 0?  
 
 # Top tip: Scale a continuous predictor to make the intercept more meaningful
 
-# A more meaningful intercept would represent the expected value of y when x is at the average value i.e., when x is the mean (rather than 0). We can do so by scaling the predictor using scale() function. This can be done within the model (rather than change the data).
+# A more meaningful intercept would represent the expected value of y when x is at the average value i.e., when x is the mean (rather than 0). 
+# We can do so by scaling the predictor using scale() function. This can be done within the model (rather than change the data).
 
-### 3.1.3. Refit Regression Model -----------
+### 3.1.4. Scale the Predictor and Refit Model -----------
+
 # Refit the regression model, now use scaled energy bill as a predictor.
 model1_scale <- lm (Housing_Increase ~ scale(average_energy_bill_2021), data = Scot_data)
 
 summary(model1_scale)
-# Now the intercept is more meaningful. It tells us the expected increase of house price with an average energy bill.  In other words, when an area's energy bill is at the average value across Scotland, the expected increase of house price in that area would be 20,974.
+# Now the intercept is more meaningful. It tells us the expected increase of house price with an average energy bill. 
+# In other words, when an area's energy bill is at the average value across Scotland, the expected increase of house price in that area would be 20,974.
 
-# Slope is the number of units by which Y (the outcome variable) increases on average, as X (the predictor variable) increases by a unit. In this case, the slope shows that energy bill increases by 1 unit, the expected increase of house price increased by -£1,436, or decreases by £1,436. HOWEVER, the results is insignificant (p = .39), suggesting that house price increase is not associated with energy bill.
-
-# Note that the overall model quality is low. The R-squared and adjusted R-squared shows how much variance the predictor can explain - in this case, nearly zero! (Note the negative number for the adjusted R-squared. The formula for adjusted R square allows it to be negative. It is intended to approximate the actual percentage variance explained. So if the actual R square is close to zero the adjusted R square can be slightly negative. You can just think of it as an estimate of zero). Finally, the last line of the model output tells us this model is not better than a null model which does not include any predictor : F(1, 30) = 0.75, P < .39.
+### 3.1.5. Evaluate Model Quality ------------
+# Note that the abot results produce F-statistics to show the overall model quality, which is low. The R-squared and adjusted R-squared shows how much variance the predictor can explain - in this case, nearly zero! (Note the negative number for the adjusted R-squared. The formula for adjusted R square allows it to be negative. It is intended to approximate the actual percentage variance explained. So if the actual R square is close to zero the adjusted R square can be slightly negative. You can just think of it as an estimate of zero). Finally, the last line of the model output tells us this model is not better than a null model which does not include any predictor : F(1, 30) = 0.75, P < .39.
 # We can test this manually by building a null model which includes no predictor but only the intercept.
 
-### 3.1.4. Compare to the Null Model ------------
-# Fit a regression model including no predictor, using lm() function.
+# Fit a null regression model including no predictor, using lm() function.
 model_null <- lm (Housing_Increase ~ 1, data = Scot_data)
 
 # We then compare it with our model1 which had "energy bill" as a predictor.
@@ -139,8 +148,8 @@ anova(model_null, model1_scale)
 
 # We can conclude that house price increase is not associated with energy bill.
 
-## 3.2. Check against Alcohol Consumption =======
-# Is alcohol consumption associated with the increase of house price? 
+## 3.2. Check Against Alcohol Consumption =======
+# RQ2. Is alcohol consumption associated with the increase of house price? 
 
 ### 3.2.1. Plot the relation -----------
 ggplot(data = Scot_data,
@@ -152,11 +161,10 @@ ggplot(data = Scot_data,
        y = "House Price Increase from 2021-2022",
   )
 
-
 # The plot seems to suggest that there is a trend - as the consumption of alcohol increases, the housing increase becomes smaller. In other words, for the areas that consumed more alcohol, their house price increased less than other areas. 
+# Is this difference significant statistically?
 
-### 3.2.2. Regression Model for alcohol consumption vs house prices ------------------
-# Is this difference significant statistically? 
+### 3.2.2. Fit Regression Model to Check again Alcohol Consumption ------------------
 
 # Let's test this in a regression model. Fit a regression model including scaled alcohol consumption as a predictor, using lm() function.
 model2 <- lm (Housing_Increase ~ scale(Alcohol), data = Scot_data)
@@ -169,17 +177,15 @@ summary(model2)
 # An example answer: 
 
 # The model intercept is significant (P < .001) and it tells us that the expected increase of house price in Scotland is £20,974 on average, for an area that consumed average amount of alcohol.  
-
 # The slope (Alcohol) tells us that, as Alcohol consumption increases by 1 unit, the increase of house price increase is increased by -£3,812, i.e., reduced by £3,812. Note that this predictor is significant, p < .05.
-
 # This model can explain 14.43% of the variance. It is significantly better than the null model, F(1, 30) = 6.23, p < .05.
-
 # We can conclude that the increase of house price is associated with alcohol consumption.
 
-## 3.3. Is the increase of house price dependent of location (Rural vs Urban)? =============
+## 3.3. Check Against Location =============
 
-### 3.3.1. Plot the relation -------------------
+# RQ3. Is the increase of house price dependent of location (Rural vs Urban)?
 
+### 3.3.1. Plot the Relation -------------------
 # when dealing with a categorical predictor, it would make sense to use box plot instead of scatter plot.
 ggplot(data = Scot_data,
          aes(x=location, 
@@ -197,7 +203,7 @@ ggplot(data = Scot_data,
 
 # It looks like location is not associated with the increase of housing price.
 
-### 3.3.2. Regression Model for Rural vs Urban -------------------
+### 3.3.2. Fit a Regression Model -------------------
 # Let's test this in a regression model. Fit a regression model including the 2-level factor "location" as a predictor, using lm() function.
 model3 <- lm (Housing_Increase ~ location, data = Scot_data)
 summary(model3)
@@ -214,21 +220,25 @@ summary(model3)
 
 # We can conclude that there is no difference between the two categories,in other words, housing increase is a general trend that occurs in both Urban and Rural areas.
 
-## 3.4. Is Deprivation associated with increase of house price? ========
+## 3.4. Exercise 3 --------------
+# We need to check against Deprivation to answer RQ4.
+# RQ4. Is Deprivation (measured as SIMD) associated with increase of house price? ========
+# Can you try to plot the relation between Housing_Increase and SIMD ?
+# Can you fit a regression model to test this statistically and interpret the results? 
+
 # First let's recall what SIMD is. 
 # SIMD ranks data zones from most deprived (ranked 1) to least deprived (ranked 6,976). More deprived areas have smaller SIMD values. 
 
 # https://www.gov.scot/collections/scottish-index-of-multiple-deprivation-2020/#supportingdocuments
 
-### 3.4.1 Exercise 2 --------------
-# Can you try to plot the relation between Housing_Increase and SIMD ?
-# Can you Interpret the results?
 
 ## 3.5. Multiple regression (i.e., with multiple predictors) ======= 
-# We can have more than one predictors in a single regression.  
+# We can have more than one predictor in a regression model.  
 
-# From the above we know that the increase of house price is significantly associated with alcohol consumption, and also with SIMD but only marginally significantly. Let's see what happens if we include both alcohol and SIMD in the model.
-model5 <- lm(Housing_Increase ~ scale(SIMD) + scale(Alcohol)  , data = Scot_data)
+# From the above we know that the increase of house price is significantly associated with alcohol consumption.
+# From Exercise 3, hopefully you have found that house price is also assiciated with SIMD, though only marginally significant.
+# Let's see what happens if we include both alcohol and SIMD in the model.
+model5 <- lm(Housing_Increase ~ scale(Alcohol) + scale(SIMD) , data = Scot_data)
 summary(model5)
 
 # Now we see that if we include them both, neither factor remains significant.
@@ -242,7 +252,8 @@ anova (model2, model5)
 
 # The results show that including both Alcohol and SIMD as predictors did not improve model fit compare to either one-predictor model (F(1) =.01, p=.91). 
 
-
+### 3.5.1 Exercise 4 --------------
+# Is the two-predictor model (SIMD + Alcohol) better than the one-predictor(SIMD only) model? 
 
 # 4. Null Hypothesis Testing ############################
 
@@ -257,7 +268,7 @@ print(two_sample_ttest) # Our p value is significantly larger than 0.05, and so 
 
 # We can also use this to see if specific factors make a difference. For example, is the increase in food insecurity significantly higher between urban and rural authorities.
 
-### 4.1.2. Compare Urban vs Rural--------------
+### 4.1.2 Compare Urban vs Rural--------------
 # In this case we want to use the data set that contains the % of increase/decrease
 
 authority_data_cleaned<-read_csv("Day3/DataWrangling/outputs/authority_data_cleaned.csv")
@@ -273,7 +284,7 @@ two_sample_ttest <- t.test(Rural$FoodInsecurity, Urban$FoodInsecurity)
 
 print(two_sample_ttest) # So even if the means are very different Again, we cannot reject the Null Hypothesis.
 
-### 4.1.3. Exercise 3------------------
+### 4.1.3 Exercise 5------------------
 
 # What about homeless application? Check the difference in increase/decrease of homeless applications between urban and rural authorities. Use a two sample t.test and determine whether or not the Null Hypothesis, that the Urban and Rural distinction is not a major factor, can be rejected.
 
@@ -304,7 +315,7 @@ TukeyTest <- TukeyHSD(AnovaResult)
 print(TukeyTest)
 #Check across all possible comparison. So the are statistically significant variations across the different comparisons but they null themselves when we look at the whole sample
 
-### 4.3.2. Exercise 4 ----
+### 4.3.2. Exercise 6 ----
 # Using an ANOVA test, determine the extent to which deprivation, the Urban-Rural divide and the areas of Scotland are each significant factors in determining increase/decrease in Homeless Applications.
 
 # This is just an introduction to hypothesis testing, but we will continue over the rest of the day looking at different statistical analyses.
@@ -355,7 +366,7 @@ autoplot(pcs, data=PCADataset, colour='location', alpha=0.5, loadings=TRUE,loadi
 #The loadings arrows will identify which are the variables that more impact the differences across the groups
 
 
-## 5.5. Exercise 5
+## 5.5. Exercise 7
 # Look at Impact on different deprivation areas
 
 # 6. K-Means Clustering #####
