@@ -38,8 +38,16 @@ uk_data_clean <- mutate_if(uk_data,
 SC_data_clean <- mutate_if(SC_data, 
                            is.character, 
                            str_replace_all, 
-                           pattern = 
+                           pattern ="\r?\n|\r", #Searching for
                              replacement = " ")
+# This will come handy afterwards but let's have a new data set that will merge Scotland and UK 
+# First all need to rename UK columns and reorder them
+ForMergingUK<-uk_data_clean %>% 
+  rename(
+    texts = clean_text)%>% 
+  select(texts, dates, titles)
+
+Merged_dataset <- rbind(ForMergingUK, SC_data_clean)
 
 # We'll work with the UK data first, and then you'll repeat the process with the Scotland data on your own later in this block.
 # Subset the text column and save it as an object:
@@ -61,24 +69,39 @@ uk_corpus <- tm_map (uk_corpus, stripWhitespace) # remove multiple white spaces
 lda_dtm_uk <- DocumentTermMatrix(uk_corpus)
 inspect(lda_dtm_uk) 
 
-# Print the terms in the dataset that appear at least 100 times
+# Print the terms in the data set that appear at least 100 times
 findFreqTerms(lda_dtm_uk, 100) 
 
 # Print the terms associated with the keyword that have a correlation coefficient of >= 0.4:
 findAssocs(lda_dtm_uk, "england", .4)
 findAssocs(lda_dtm_uk, "scotland", .4)
+# NB This is still done on the UK data set you can try see how that will change the results
 
+# We want to select top of one and lower other
 # Create a new object containing our results
-AssociationEngland<-data.frame(findAssocs(lda_dtm_uk, "england", .4))
-AssociationEnglandCleaned<- data.frame(Term=rownames(AssociationEngland), Value=AssociationEngland[,1], Association= "England")
+AssociationEngland<-data.frame(findAssocs(lda_dtm_uk, "england", .01))
+AssociationEnglandCleaned<- data.frame(Term=rownames(AssociationEngland), ValueEngland=AssociationEngland[,1], Association= "England")
 
-AssociationScotland<-data.frame(findAssocs(lda_dtm_uk, "scotland", .4))
-AssociationScotlandCleaned<- data.frame(Term=rownames(AssociationScotland), Value=AssociationScotland[,1], Association="Scotland")
+AssociationScotland<-data.frame(findAssocs(lda_dtm_uk, "scotland", .01))
+AssociationScotlandCleaned<- data.frame(Term=rownames(AssociationScotland), ValueScotland=AssociationScotland[,1], Association="Scotland")
 
-AssociationTot <-rbind(AssociationEnglandCleaned, AssociationScotlandCleaned)
+# To bring them together we are going to use merge (we are going to cover tomorrow how it work but for now)
+Merged_datasets <- merge(AssociationScotlandCleaned, AssociationEnglandCleaned, by.x = 'Term', by.y = 'Term') 
+
+VeryEnglish<-subset(Merged_datasets,ValueScotland<0.45 &ValueEngland>0.55)
+
+Merged_datasets$Comparison <- ifelse(Merged_datasets$ValueScotland > 0.55 & Merged_datasets$ValueEngland < 0.45, "VeryScottish", 
+                                     ifelse(Merged_datasets$ValueEngland > 0.55 & Merged_datasets$ValueScotland <= 0.45, "VeryEnglish", 
+                                            "Communal"))
+
+# Subset only the words that are very Scottish or very English
+Extreme<-subset(Merged_datasets, Comparison!="Communal")
+
+# Now I need to have one single value for each
+Extreme$Value<-ifelse(Extreme$Comparison == "VeryScottish", Extreme$ValueScotland, Extreme$ValueEngland)
 
 # Visualise our results
-ggplot(AssociationTot, aes(y=Term, x=Value, colour=Association))+
+ggplot(Extreme, aes(y=Term, x=Value, colour=Comparison))+
   geom_point(size=5)+
   theme_bw()
 # What can we see in the graph? 
@@ -119,7 +142,9 @@ uk_lda_terms_2 <- as.matrix(terms(uk_lda_2,10))
 # Print the top 10 terms associated with each topic:
 uk_lda_terms_2[1:10,]
 
-#Discuss the results with your table. From a human perspective, did removing extra words improve the topic modelling analysis?
+# Discuss the results with your table. From a human perspective, did removing extra words improve the topic modelling analysis?
+
+# So far we worked on the uk dataset what if we work on the total one (UK+ Scotland) "Merged_dataset" 
 
 # Sentiment-category analysis with syuzhet:-------------------------------------
 SentimentScotlandText <-SC_data_clean$texts
@@ -142,7 +167,7 @@ barplot(
   xlab="category", ylab = 'frequency')
 
 
-#With your table, repeat this analysis for the UK dataset. What can you conclude about sentiment categorisation?
+#With your table, repeat this analysis for the UK data set. What can you conclude about sentiment categorisation?
 
 #Wrap-up discussion:
 #1. What are the pros and cons of the methods we have used in this block?

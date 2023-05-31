@@ -22,3 +22,4 @@ install.packages("ggfortify")
 # Data Vis
 install.packages("gifski")
 install.packages("av")
+install.packages("textstem")
