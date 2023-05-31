@@ -2,9 +2,9 @@
 ###### PART 1: Plots in R ######
 
 # 1. Getting Set ###########
-# 1.1 Packages we need ==========
+## 1.1 Packages we need ==========
 library(tidyverse)
-# 1.2 Import the data sets ===========
+## 1.2 Import the data sets ===========
 Scot_data <- read_csv("Day5/data/Full_Scottish_Data.csv")
 Scot_data$Deprivation <-ifelse(Scot_data$SIMD>=median(Scot_data$SIMD),"least","most")# We are going to need one more binary variable that will divide our dataset in most deprived/less deprived based on the median
 authority_data<-read_csv("Day5/data/authority_data_cleaned.csv")
@@ -12,7 +12,7 @@ authority_data<-read_csv("Day5/data/authority_data_cleaned.csv")
 # 2. Basic Visualisation ################
 # Base R has a series of ways to visualise data.
 
-# 2.1 Structured Visualisation ====================
+## 2.1 Structured Visualisation ====================
 # We can use functions to more easily pull information from our data at a glance.
 str(authority_data) # Basic structural information of the data set
 head(authority_data) # View the first 10 observations
@@ -21,7 +21,7 @@ summary(authority_data) # More detailed summary of the data. This saves using in
 
 View(authority_data) # A more user friendly view of the data frame (you can also click on the variable in the environment)
 
-# 2.2 Basic Plots ================
+## 2.2 Basic Plots ================
 # A more effective way to visualise all of this data can be through graphs, or plots
 
 # The base graph functions in R come from the default 'graphics' package
@@ -39,11 +39,11 @@ browseURL("https://towardsdatascience.com/a-guide-to-data-visualisation-in-r-for
 
 # However, the level of detail and customization afforded by ggplot2 is far greater
 
-# 3  GGPlot and the Grammar of Graphics ################
+# 3.  GGPlot and the Grammar of Graphics ################
 # The main package we will be using for data visualisation is ggplot2, included in the tidyverse package
 help(ggplot)
 
-# 3.1 Basic Syntax ======================
+## 3.1 Basic Syntax ======================
 # Lets visualise the same scatter plot above using ggplot/
 ggplot(Scot_data, aes(x= SIMD, y= life_expectancy_2022)) + geom_point() # While this may seem slightly more complicated than basic plot functions for a very similar result, it allows far more customization and the syntax is actually fairly straightforward
 
@@ -69,10 +69,10 @@ Basic_plot + geom_histogram(colour = 'black', fill = 'indianred3', binwidth = sd
 Basic_plot + geom_histogram(colour = 'black', fill = 'indianred3', bins = 10)
 
 
-# 3.2 Greater Customization with ggplot2 ==================
+## 3.2. Greater Customization with ggplot2 ==================
 # These are fairly basic plots, but a great level of customization is possible with ggplot2
 
-# 3.2.1 Working with the Theme ---------------
+### 3.2.1 Working with the Theme ---------------
 # The theme() argument allows for deep customization of non-data components of plots 
 HousePrices <- ggplot(authority_data, aes(HousePrices)) # We can also check the general trend of how house prices have icnreased from 2021-2022.
 
@@ -87,7 +87,7 @@ HousePrices  + geom_histogram(colour = 'gray2', fill = 'indianred3', bins = 20) 
 # This site contains a list of possible ready made themes, but standard themes can be much more minutely adjusted
 browseURL("https://ggplot2.tidyverse.org/reference/ggtheme.html")
 
-# 3.2.2 Multidimensional Data ---------
+### 3.2.2 Multidimensional Data ---------
 ggplot(authority_data, aes(life_expectancy_2022, Alcohol, shape = as.factor(SIMDQuint))) + # we need to use factor because when we re-import the data R encoded SIMD Quint as numeric again
   geom_point(aes(colour = location), size = 4) # In this scatter plot, we used the SIMD Quantile variable to change the shape and 'location' to change the colour of the data, adding more dimensions to the plot.
 
@@ -97,7 +97,7 @@ HousePrices  + geom_histogram(aes(fill = as.factor(SIMDQuint)), colour = 'gray2'
 
 # This shows a fairly even spread across deprivation levels for the increase in house prices.
 
-#3.2.3. Legends ---------------
+### 3.2.3. Legends ---------------
 # Legends can be customized using theme() in multiple ways, including setting position or removing it altogether
 HousePrices <- ggplot(authority_data, aes(HousePrices)) # Let's create a plot showing the change in house prices across the different areas of Scotland, as a percentage. We did it already for the authority-data but this is to show that you can do it on the fly too
 
@@ -123,7 +123,7 @@ HousePrice_SIMD  +
 
 # These plots seem to show that houses cost increase across all SIMD deciles and the highest increases are mostly on higher deciles areas 
 
-# 3.2.4. Labels --------------
+### 3.2.4. Labels --------------
 # Labels can also be easily customized in ggplot2
 Histogram <- HousePrices +
   geom_histogram(aes(fill = as.factor(SIMDDecil)), colour = 'gray2', bins = 40) +
@@ -160,7 +160,7 @@ Scatter_plot <- ggplot(Scot_data, aes(SIMD, life_expectancy_2022, shape = locati
 
 Scatter_plot # Now we can see which specific authorities are the most deprived, with Glasgow City having the highest levels of deprivation and the lowest life expectancy. (It might be easier to see if you click 'zoom').
 
-# 3.2.5. Colours ----------------------
+### 3.2.5. Colours ----------------------
 # The default colours in R aren't necessarily always the best options, but this too can be customized
 browseURL("https://r-charts.com/colors/") # Default colours in R
 
@@ -185,25 +185,25 @@ Scatter_plot +
   facet_wrap(~region, ncol = 4, dir = 'v')
 
 
-## 3.3 Different Types of Plots =======
+## 3.3. Different Types of Plots =======
 # So far we have looked mainly at scatter plots and histograms. There are many more than this, we can look at some of the main other options now, but for greater detail for many available plots see:
 browseURL("http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html")
 
-### 3.3.1 Scatter plot
+### 3.3.1. Scatter plot --------------
 Scatter_plot # This plot is very commonly used and particularly useful for identifying correlations. In this case,a positive correlation between deprivation and life expectancy.
 
-### 3.3.2 Histogram
+### 3.3.2. Histogram---------------
 ggplot(authority_data, aes(Alcohol)) +
   geom_histogram(aes(fill = as.factor(SIMDDecil)), colour = 'gray2', bins = 20) +
   theme_bw() # Histograms are particularly useful for plotting distributions and detecting whether or not the plot is normally distributed. With sensible use of fill, different attributes can also be easily compared. This plot seems to suggest the more deprived authorities generally see greater levels of alcohol abuse. 
 
 
-### 3.3.3 Density Plot
+### 3.3.3. Density Plot -------------------
 ggplot(Scot_data, aes(Alcohol)) +
   geom_density() +
   facet_wrap(~Deprivation) # This is similar to a histogram, in that it can show peaks and troughs in the distribution, but with a density plot, the precise shape of each factors distribution can be more easily visualised. This shows a large peak among the least deprived authorities at a low level of alcohol abuse, the peak is less pronounced but at higher levels of alcohol abuse for the more deprived authorities.
 
-### 3.3.4 Boxplots
+### 3.3.4 Boxplots -----------------
 ggplot(Scot_data, aes(x= Deprivation, y= life_expectancy_2022, fill= location)) +
   geom_boxplot() # This plot allows for distributions, means, range and outliers to be very easily identified. The mean is the horizontal line across each box and the top section of each box the 75%ile, with the bottom section 25%ile. The colour or shape of outliers can be altered with outlier. Or even removed eg.
 ggplot(Scot_data, aes(x= Deprivation, y= life_expectancy_2022, fill= location)) +
@@ -225,20 +225,20 @@ boxplot.stats(Scot_data$life_expectancy_2022)
 # 1. Spatial Data ######
 # Spatial data is requires more complex to work with in R. This will just provide a brief example of how spatial data can be visualise din R, but it is important to understand the complexities of spatial data if you want to take this further.
 
-## 1.1. Getting setup ######
-### 1.1.1 Additional Libraries needed
+## 1.1. Getting setup ===========
+### 1.1.1 Additional Libraries needed --------------
 library(rgdal)
 library(sp)
 library(sf)
 library(gridExtra)
 library(latticeExtra)
 
-### 1.1.2 Import Simple Shapefiles 
+### 1.1.2 Import Simple Shapefiles ------------------
 Local_auth <- st_read("Day5/data/Spatial/Local_auth.shp") # st_read() is part of the sf (Simple Features) package, which allows us to import shapefiles and their attributes. Look at the Local_auth object. It contains much of the same data as we have in our csv file, but also contains spatial data.
 
 Local_auth$geometry # This provides some of the geographic data.
 
-### 1.1.3 basic visualisation
+### 1.1.3 basic visualisation ----------------
 plot(st_geometry(Local_auth)) # st_geometry() allows us to plot only the spatial data. But we can visualise different, non-spatial data.
 
 plot(Local_auth[1]) # Plot the first column, just the authorities.
@@ -354,7 +354,7 @@ ByMonthYear<-LongPlot%>%
   group_by(MonthYear,Sentiment)%>%
   summarise(count=round(mean(count)))
 
-### 2.3.2 Create an animated visualisation
+### 2.3.2 Create an animated visualisation -----------------
 # Make a ggplot, but add frame=month: one image per month-year
 animationSent<-ggplot(ByMonthYear, aes(x=Sentiment, y=count, fill=Sentiment)) +
   geom_col(colour="black") +# border of the bars

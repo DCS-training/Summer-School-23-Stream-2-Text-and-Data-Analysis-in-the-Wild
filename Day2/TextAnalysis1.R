@@ -7,6 +7,12 @@
 # PART1: DATA CLEANING AND BASIC ANALYSIS
 # 1. Getting Setup ====================
 ## 1.1. Load required libraries ------------
+install.packages("lexicon")
+install.packages("wordcloud")
+install.packages("textstem")
+install.packages("quanteda.textmodels")
+install.packages("quanteda.textplots")
+install.packages("tidytext")
 library(quanteda)
 library(quanteda.textplots)
 library(quanteda.textmodels)

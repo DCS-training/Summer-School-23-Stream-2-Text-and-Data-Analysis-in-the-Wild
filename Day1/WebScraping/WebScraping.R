@@ -6,6 +6,7 @@
 # PART1: Scraping the UK Government Website ###########
 # 1. Getting Setup ====================
 ## 1.1. Libraries needed--------------
+install.packages("rvest")
 library(tidyverse)
 library(rvest)
 ## 1.2. Analyse the structure of the website we want to use -------

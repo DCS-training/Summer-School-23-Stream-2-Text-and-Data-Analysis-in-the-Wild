@@ -8,6 +8,8 @@
 # PART2: TOPIC MODELLING ###########
 # Setting up ===================
 # Libraries needed
+install.packages("quanteda.textstats")
+install.packages("syuzhet")
 library(quanteda)
 library(tidyverse)
 library(quanteda.textstats)
@@ -16,7 +18,6 @@ library(quanteda.textplots)
 library(tm)
 library(topicmodels)
 library(syuzhet)
-library(ggplot2)
 library(RColorBrewer)
 
 # Load the data:
