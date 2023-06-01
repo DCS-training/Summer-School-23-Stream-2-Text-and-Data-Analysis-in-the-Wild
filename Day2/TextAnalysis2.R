@@ -5,7 +5,7 @@
 # 2.Comparing the UK and Scotland data sets, do we see any patterns/similarities/differences in themes?
 
 
-# PART2: TOPIC MODELLING ###########
+# PART 2: TOPIC MODELLING ###########
 # Setting up ===================
 # Libraries needed
 install.packages("quanteda.textstats")
@@ -146,7 +146,7 @@ uk_lda_terms_2[1:10,]
 
 # Discuss the results with your table. From a human perspective, did removing extra words improve the topic modelling analysis?
 
-# So far we worked on the uk dataset what if we work on the total one (UK+ Scotland) "Merged_dataset" 
+# So far, we worked on the UK dataset. Let's have a look at the merged (UK+ Scotland) dataframe we created earlier in this lesson ("Merged_dataset")
 
 # Sentiment-category analysis with syuzhet:-------------------------------------
 SentimentScotlandText <-SC_data_clean$texts
@@ -168,7 +168,7 @@ barplot(
   main = "Sentiment by Category: Scotland Data",
   xlab="category", ylab = 'frequency')
 
-
+# Exercise 1: Topic Modelling + Sentiment Categorisation using the Scotland news dataset  =============
 #With your table, repeat this analysis for the UK data set. What can you conclude about sentiment categorisation?
 
 #Wrap-up discussion:
