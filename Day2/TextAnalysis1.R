@@ -32,15 +32,15 @@ uk_data<-uk_data[, 2:4]
 # Look at the text of our articles
 head(uk_data$clean_text)
 # There are a lot of formatting errors (next line, next paragraph) that we want to clean up
-uk_data_clean <- mutate_if(uk_data, #change if is character so titles and texts
-                           is.character, 
+uk_data_clean <- mutate_if(uk_data, 
+                           is.character, #apply the changes only if the data is a "character" type (e.g. text)
                            str_replace_all, 
-                           pattern = "\r?\n|\r", #What I am searching
-                           replacement = " ")#What I am replacing with
+                           pattern = "\r?\n|\r", #What I am searching for: scraped text reflected paragraph/line breaks in the original online text
+                           replacement = " ")#What I am replacing the search matches with (a blank space)
 
-# Which will insert only one space regardless whether the text contains \r\n, \n or \r.
-# Let's check again 
-head(uk_data_clean$clean_text) # Now is much cleaner
+# This will insert only one space regardless whether the text contains \r\n, \n or \r.
+# Let's check the results
+head(uk_data_clean$clean_text) # Now, it's much cleaner. We will perform cleaning and preprocessing in more detail later on.
 
 # 3. Create a Quanteda Corpus ===========
 # Create a Quanteda corpus of the 'article text' column from our data set:
@@ -80,16 +80,20 @@ ggplot(BreakoutUK, aes(x=MonthYear, y=NArticles))+ # Select data set and coordin
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), legend.position = "bottom")+ # Rotate labels of x and move them slightly down. Plus move the position to the bottom 
   guides(size = "none") # Remove the Size from the Legend 
 
-# What is telling us this graph?
+# Discussion question: what is the graph telling us about our data?
 
 # 5. Tokenise the Corpus =================
-# Now we can tokenise the corpus 
+# Now, we can tokenise the corpus, which will break the textual data into separate words grouped by document. We are also removing symbols, URLs, and punctuation.
 article_tokens <- quanteda::tokens(article_text, 
                                    remove_symbols=TRUE, 
                                    remove_url=TRUE, 
-                                   remove_punct=TRUE)
+                                   remove_punct=TRUE
+                                   
+# Take a look at our tokens list by printing the second document:
+article_tokens[2]
 
-# Remove tokens under 3 characters:
+# Remove tokens under 3 characters. (Shorter words won't tell us much about our data, and because we removed punctuation, we want to get rid of the 
+                                   #truncated contractions--e.g. I'm -->'I', 'm')
 article_tokens <- tokens_select(article_tokens, min_nchar = 3)
 
 # 6. Keywords in Context =================
@@ -98,6 +102,8 @@ kwic(article_tokens, "cost")
 kwic(article_tokens, "cost", 3)
 article_tokens %>% 
   kwic(pattern = phrase("cost of living"))
+#Discussion: Examining the output, why do you think we get 0 matches for this search? 
+                                   
 article_tokens %>%
   kwic(pattern=c("price", "bills", "payment"))
 
@@ -152,7 +158,7 @@ lemma_dfm <- dfm(lemmas)
 topfeatures(stem_dfm, 20)
 topfeatures(lemma_dfm, 20)
 
-# What can we observe about stemming and lemmatization? which method (if any) is better for answering our research questions, and why?
+# Discussion: What can we observe about stemming and lemmatization? which method (if any) is better for answering our research questions, and why?
 
 # Make a word cloud of the lemmatized results:
 textplot_wordcloud(lemma_dfm, rotation = 0.25,
@@ -169,9 +175,9 @@ data.frame(list(term = names(top_keys), frequency = unname(top_keys))) %>% # Cre
   labs(x = "Term", y = "Frequency") +
   theme(axis.text.x=element_text(angle=90, hjust=1))
 
-# Closing discussion: =============
+# Comparing the Datasets: =============
 
-# Now we compare what we have found for the general UK with what we can find in the Scottish news. Hint: Copy and paste the code we used so far below and adapt it to do the same steps in the Scottish Dataset 
+# Now, we will compare what we have found for the general UK dataset with what we can find in the Scottish news dataset. Hint: Copy and paste the code we used so far below and adapt it to do the same steps in the Scottish Dataset 
 
 # To start:
 # Load the Scotland data
