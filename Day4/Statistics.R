@@ -111,16 +111,16 @@ summary(model1)
 
 # What is the intercept? 
 # Intercept is the expected value of Y (the outcome variable) when X (the predictor) is 0.
-
-# What is the slope?
-# Slope is the number of units by which Y (the outcome variable) increases on average, as X (the predictor variable) increases by a unit. In this case, the slope shows that energy bill increases by 1 unit, the expected increase of house price increased by -£1,436, or decreases by £1,436. HOWEVER, the results is insignificant (p = .39), suggesting that house price increase is not associated with energy bill.
-
 # The intercept of the model tells us that the expected house price increase in Scotland between 2021 and 2022 is £31466.38, when energy bill in 2021 was 0.
 # It is significant (P <.05), suggesting that the increase of house price increase varied. 
 
+# What is the slope?
+# Slope is the number of units by which Y (the outcome variable) increases on average, as X (the predictor variable) increases by a unit. In this case, the slope shows that energy bill increases by 1 unit, the expected increase of house price increased by -£7.44, or decreases by £7.44. HOWEVER, the results is insignificant (p = .39), suggesting that house price increase is not associated with energy bill.
+
 # But energy bill is unlikely to be 0 if it is a house that people want to buy or rent, thus this intercept is not very informative.
+
 # Can we make the intercept more meaningful? 
-# for example, a more meaning intercept would represent the expected value of house in crease, when energy bill is the mean rather than 0?  
+# For example, a more meaning intercept would represent the expected value of house in crease, when energy bill is the mean rather than 0?  
 
 # Top tip: Scale a continuous predictor to make the intercept more meaningful
 
@@ -135,9 +135,11 @@ model1_scale <- lm (Housing_Increase ~ scale(average_energy_bill_2021), data = S
 summary(model1_scale)
 # Now the intercept is more meaningful. It tells us the expected increase of house price with an average energy bill. 
 # In other words, when an area's energy bill is at the average value across Scotland, the expected increase of house price in that area would be 20,974.
+# The slope shows that as energy bill increases by 1 unit, the expected increase of house price increased by -£1,436, or decreases by £1,436. HOWEVER, the results is insignificant (p = .39), suggesting that house price increase is not associated with energy bill.
 
 ### 3.1.5. Evaluate Model Quality ------------
-# Note that the abot results produce F-statistics to show the overall model quality, which is low. The R-squared and adjusted R-squared shows how much variance the predictor can explain - in this case, nearly zero! (Note the negative number for the adjusted R-squared. The formula for adjusted R square allows it to be negative. It is intended to approximate the actual percentage variance explained. So if the actual R square is close to zero the adjusted R square can be slightly negative. You can just think of it as an estimate of zero). Finally, the last line of the model output tells us this model is not better than a null model which does not include any predictor : F(1, 30) = 0.75, P < .39.
+# Note that the abot results produce F-statistics to show the overall model quality, which is low. The R-squared and adjusted R-squared shows how much variance the predictor can explain - in this case, nearly zero! (Note the negative number for the adjusted R-squared. The formula for adjusted R square allows it to be negative. It is intended to approximate the actual percentage variance explained. So if the actual R square is close to zero the adjusted R square can be slightly negative. You can just think of it as an estimate of zero). Finally, the last line of the model output tells us this model is not better than a null model which does not include any predictor : F(1, 30) = 0.75, P = .39.
+
 # We can test this manually by building a null model which includes no predictor but only the intercept.
 
 # Fit a null regression model including no predictor, using lm() function.
@@ -180,6 +182,7 @@ summary(model2)
 
 # The model intercept is significant (P < .001) and it tells us that the expected increase of house price in Scotland is £20,974 on average, for an area that consumed average amount of alcohol.  
 # The slope (Alcohol) tells us that, as Alcohol consumption increases by 1 unit, the increase of house price increase is increased by -£3,812, i.e., reduced by £3,812. Note that this predictor is significant, p < .05.
+
 # This model can explain 14.43% of the variance. It is significantly better than the null model, F(1, 30) = 6.23, p < .05.
 # We can conclude that the increase of house price is associated with alcohol consumption.
 
@@ -216,9 +219,9 @@ summary(model3)
 
 # R automatically uses dummy coding and choose a reference level for us based on the alphabetic order of the level name. For example here "Rural" is chosen as the reference level as letter "R" comes before letter "U" for "Urban". You can manually change the reference level using the relevel() function.
 
-# Intercept: The expected increase of house price is £20945.58 in Rural areas.
+# Intercept: The expected increase of house price is £21,769 in Rural areas.
 
-# Slope: The expected increase of house price for the Urban areas is £69.42 more than Rural areas. However, this difference is NOT significant.
+# Slope: The expected increase of house price for the Urban areas is £1,817 more than Rural areas. However, this difference is NOT significant.
 
 # We can conclude that there is no difference between the two categories,in other words, housing increase is a general trend that occurs in both Urban and Rural areas.
 

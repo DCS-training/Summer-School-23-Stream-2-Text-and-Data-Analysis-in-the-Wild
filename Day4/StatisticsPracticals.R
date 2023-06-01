@@ -48,7 +48,7 @@ anova (model4, model5)
 
 #Did the two-predictor model improve model fit?
 #Answer
-#No, it did not.The results show that including both Alcohol and SIMD as predictors did not improve model fit compare to a one-predictor model that only include SIMD as a predictor (F(1) =.2.43, p=.13). 
+#No, it did not.The results show that including both Alcohol and SIMD as predictors did not improve model fit compare to a one-predictor model that only include SIMD as a predictor (F(1) = 2.43, p=.13). 
 
 ### 4.1.3 Exercise 5------------------
 
