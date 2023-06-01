@@ -271,12 +271,9 @@ spplot(Scot, zcol = 'HomelessIncrease')
 ## 2.2 Word Frequency======================
 ### 2.2.1 Setting up ---------------
 # Additional Libraries needed
-install.packages("gifski")
-install.packages("av")
+install.packages("gganimate")
 install.packages("textstem")
 library(gganimate)
-library(gifski)
-library(av)
 library(textstem)
 # Re-import file 
 uk_data_clean <- read_csv("Day5/data/TextDataVis.csv")
