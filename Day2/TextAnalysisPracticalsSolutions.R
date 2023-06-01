@@ -1,4 +1,4 @@
-# Exercise 1: Clean and Analyse the Scottish News  =============
+# Exercise 1: Topic Modelling + Sentiment Categorisation using the Scotland news dataset  =============
 
 # Now we compare what we have found for the general UK with what we can find in the Scottish news. 
 # Load the Scotland data
