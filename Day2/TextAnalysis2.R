@@ -64,9 +64,9 @@ uk_corpus <- tm_map (uk_corpus, removeNumbers)# remove numbers
 uk_corpus <- tm_map (uk_corpus, stripWhitespace) # remove multiple white spaces
 
 # Topic Modelling=================================
-# Create a document term matrix of the corpus.
-# a mathematical matrix that describes the frequency of terms that occur in a collection of documents. In a document-term matrix, 
-#rows correspond to documents in the collection and columns correspond to terms.
+# Create a document term matrix (dtm) of the corpus.
+# A DTM is a mathematical matrix that describes the frequency of terms that occur in a collection of documents.  
+# Rows correspond to documents in the collection and columns correspond to terms.
 lda_dtm_uk <- DocumentTermMatrix(uk_corpus)
 inspect(lda_dtm_uk) 
 
@@ -74,9 +74,10 @@ inspect(lda_dtm_uk)
 findFreqTerms(lda_dtm_uk, 100) 
 
 # Print the terms associated with the keyword that have a correlation coefficient of >= 0.4:
+# (A correlation coefficient shows the strength of the relationship between two items on a scale of -1 to 1)
 findAssocs(lda_dtm_uk, "england", .4)
 findAssocs(lda_dtm_uk, "scotland", .4)
-# NB This is still done on the UK data set you can try see how that will change the results
+# Later on, we will compare the results after performing the same analysis on the UK dataset.
 
 # We want to select top of one and lower other
 # Create a new object containing our results
