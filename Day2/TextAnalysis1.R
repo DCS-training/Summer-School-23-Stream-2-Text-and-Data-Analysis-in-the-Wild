@@ -68,7 +68,7 @@ TokenUK$MonthYear <- format(as.Date(TokenUK$Date, format="%Y-%m-%d"),"%Y-%m")
 BreakoutUK<- TokenUK %>%
   group_by(MonthYear,Dataset)%>%
   summarize(NArticles=n(), MeanTokens=round(mean(Tokens)))
-# Now we can plot the trends
+# Now we can plot the trends. We are going to focus on plots on Friday
 ggplot(BreakoutUK, aes(x=MonthYear, y=NArticles))+ # Select data set and coordinates we are going to plot
   geom_point(aes(size=MeanTokens, fill=MeanTokens),shape=21, stroke=1.5, alpha=0.9, colour="black")+ # Which graph I want 
   labs(x = "Timeline", y = "Number of Articles", fill = "Mean of Tokens", size="Mean of Tokens", title="Number of Articles and Tokens in the UK Gov Website")+ # Rename labs and title
@@ -87,7 +87,7 @@ ggplot(BreakoutUK, aes(x=MonthYear, y=NArticles))+ # Select data set and coordin
 article_tokens <- quanteda::tokens(article_text, 
                                    remove_symbols=TRUE, 
                                    remove_url=TRUE, 
-                                   remove_punct=TRUE
+                                   remove_punct=TRUE)
                                    
 # Take a look at our tokens list by printing the second document:
 article_tokens[2]
@@ -165,7 +165,7 @@ textplot_wordcloud(lemma_dfm, rotation = 0.25,
                    max_words=50,
                    color = rev(RColorBrewer::brewer.pal(10, "Paired")))
 
-# 9. Plot Frequency
+# 9. Plot Frequency #########
 # Plot the top 20 words (non-lemmatized) in another way:
 top_keys <- topfeatures (dfm_nostop, 20)
 data.frame(list(term = names(top_keys), frequency = unname(top_keys))) %>% # Create a data.frame for ggplot
@@ -175,7 +175,7 @@ data.frame(list(term = names(top_keys), frequency = unname(top_keys))) %>% # Cre
   labs(x = "Term", y = "Frequency") +
   theme(axis.text.x=element_text(angle=90, hjust=1))
 
-# Comparing the Datasets: =============
+# 10. Exercise 1. Comparing the Datasets: #########
 
 # Now, we will compare what we have found for the general UK dataset with what we can find in the Scottish news dataset. Hint: Copy and paste the code we used so far below and adapt it to do the same steps in the Scottish Dataset 
 

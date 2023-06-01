@@ -95,7 +95,6 @@ ScotlandNews$dates <-unlist(ScotlandNews$dates)# transform dates from list to ve
 ScotlandNews$titles <-unlist(ScotlandNews$titles)# transform titles from list to vector
 ScotlandNews$dates<-as.Date(ScotlandNews$dates, format = "%d %B %Y")# make sure the date is encoded as date (https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/as.Date)
 
-ScotlandNews
 
 # Subset most recent articles 
 # Cost of Living is not a new concept so although is likely that most of the article we scraped are from the last couple of years let's subset our data set to make sure all of them are connected to the ongoing issue

@@ -134,7 +134,7 @@ get.date <- function(x){
   
 }
 
-DatesTest <-map(test, get.date) # Again let's scrape the first ones so that we can check 
+map(test, get.date) # Again let's scrape the first ones so that we can check 
 
 ### 4.1.3 Function for Text-------------
 # Write a function to get the text of the article 
