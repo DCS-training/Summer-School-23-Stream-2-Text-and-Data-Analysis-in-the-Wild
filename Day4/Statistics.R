@@ -39,8 +39,8 @@ summary(Scot_data$Housing_Increase)
 ## 2.2. Exercise 1 =====================
 # Can you add a new column to show rent increase? 
 
-## 2.3. Describe central tendency 
-# To describe central tendency, we can use Mean, Median, and SD. Sometimes it is also useful to have the total number, for that we use Sum.==================
+## 2.3. Describe central tendency ==================
+# To describe central tendency, we can use Mean, Median, and SD. Sometimes it is also useful to have the total number, for that we use Sum.
 ### 2.3.1. Mean ------------
 # Mean calculates the mean, and so we can compare mean house price across Scotland between 2021 an 2022.
 mean(Scot_data$average_rent_2021)
@@ -57,13 +57,11 @@ median(Scot_data$welfare_applications2021_2022)
 sd(Scot_data$average_energy_bill_2021) 
 mean(Scot_data$average_energy_bill_2021) # The sd is quite a small value compared to the mean, and so energy bills seem quite consistent across authorities.
 
-
 ### 2.3.4. Sum ------------
 # We can also just sum data if we want totals.
 sum(Scot_data$homelessness_applications2020_21)
 sum(Scot_data$homelessness_applications2021_2022)
 # This shows an increase in homelessness applications.
-
 
 ## 2.4 Summarise our observations =================
 # Summarise the factors of our interest into a table using %>%
@@ -75,10 +73,8 @@ housing_summary <- Scot_data %>%
             Average_Energy_bill_in_2021 = mean(average_energy_bill_2021), 
   ) %>% print()
 
-
 ## 2.5. Exercise 2 =====================
 # Can you provide summary statistics to show the mean of Population, the median of SIMD, and the sd of food_insecurity2018_2022?
-
 
 # 3. Regression #######
 # To answer our research questions, we build simple regression models to investigate which factor is associated with the increase of house price.
@@ -236,7 +232,6 @@ summary(model3)
 
 # https://www.gov.scot/collections/scottish-index-of-multiple-deprivation-2020/#supportingdocuments
 
-
 ## 3.5. Multiple regression (i.e., with multiple predictors) ======= 
 # We can have more than one predictor in a regression model.  
 
@@ -351,8 +346,6 @@ print(TukeyTest)
 
 # This is just an introduction to hypothesis testing, but we will continue over the rest of the day looking at different statistical analyses.
 
-
-
 # 5. Principle Component Analysis ###############
 ## 5.1. Getting the Dataset ready =============
 # We do not need all the variable let's create a new data frame with only the one we want
@@ -369,7 +362,6 @@ View(measures)# let see the new data set
 pcs <- prcomp(measures) #defining a new object called pcs that will run a principal components analysis of our numeric variables
 pcs
 plot(pcs)
-
 
 ## 5.3. Add PC1 and PC2 to the original dataset==========
 pcdata <- PCADataset #creating a new data frame named pcdata containing all the variables that were on the original authority data 
@@ -389,13 +381,11 @@ ggplot(pcdata, aes(x=pc1, y=pc2, color=location)) + #use pc1, pc2 and colour cod
 autoplot(pcs, data=PCADataset, colour='location', alpha=0.5, loadings=TRUE,loadings.label = TRUE, loadings.colour = 'black',loadings.label.colour= 'black')+
   theme_bw()
 
-
 # Adding Labels
 autoplot(pcs, data=PCADataset, colour='location', alpha=0.5, loadings=TRUE,loadings.label = TRUE, shape=FALSE, loadings.colour = 'black',loadings.label.colour= 'black')+
   theme_bw()+
   geom_label(aes(label = authority, hjust=0.5,vjust=0.5, colour=location))# this time we are not using ggplot but we are using autoplot within ggfortify and we are leaving the system to decide which type of graph to plot 
 #The loadings arrows will identify which are the variables that more impact the differences across the groups
-
 
 ## 5.5. Exercise 7
 # Look at Impact on different deprivation areas
