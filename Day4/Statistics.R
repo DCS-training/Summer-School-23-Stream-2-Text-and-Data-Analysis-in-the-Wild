@@ -32,7 +32,7 @@ str(authority_data)
 Scot_data$location <-as.factor(Scot_data$location)
 levels(Scot_data$location)
 
-# Add a new column for housing increase. We just need to subtract "house_price_jul_21" from "house_price_jul_22".
+# Add a new column for housing price increase. We just need to subtract "house_price_jul_21" from "house_price_jul_22".
 Scot_data$Housing_Increase <- Scot_data$house_price_jul_22 -  Scot_data$house_price_jul_21
 summary(Scot_data$Housing_Increase)
 
@@ -55,14 +55,14 @@ median(Scot_data$welfare_applications2021_2022)
 ### 2.3.3. SD ------------
 # sd can be used to calculate the standard deviation of data set. This can be helpful to understand how different each observation is across the data set.
 sd(Scot_data$average_energy_bill_2021) 
-mean(Scot_data$average_energy_bill_2021) # This is quite a small value compared to the mean, and so energy bills seem quite consistent across authorities.
+mean(Scot_data$average_energy_bill_2021) # The sd is quite a small value compared to the mean, and so energy bills seem quite consistent across authorities.
 
 
 ### 2.3.4. Sum ------------
 # We can also just sum data if we want totals.
 sum(Scot_data$homelessness_applications2020_21)
 sum(Scot_data$homelessness_applications2021_2022)
-# This shows an increase in welfare and homelessness applications.
+# This shows an increase in homelessness applications.
 
 
 ## 2.4 Summarise our observations =================
@@ -71,9 +71,10 @@ sum(Scot_data$homelessness_applications2021_2022)
 # For example the flowing code gave you summary statistics for housing_increase, rent_increase, average_energy_bill_2021 within one table
 housing_summary <- Scot_data %>% 
   summarise(Average_Housing_increase = mean(Housing_Increase), 
-    Average_Rent_increase = mean(Rent_Increase), 
-    Average_Energy_bill_in_2021 = mean(average_energy_bill_2021), 
-  )
+            Average_Rent_increase = mean(Rent_Increase), 
+            Average_Energy_bill_in_2021 = mean(average_energy_bill_2021), 
+  ) %>% print()
+
 
 ## 2.5. Exercise 2 =====================
 # Can you provide summary statistics to show the mean of Population, the median of SIMD, and the sd of food_insecurity2018_2022?
@@ -90,8 +91,8 @@ housing_summary <- Scot_data %>%
 ### 3.1.1 Plot the relation -------------
 # Consider using geom_smooth() to superimpose the best-fitting line describing the association of interest
 ggplot(data = Scot_data,
-         aes(x=average_energy_bill_2021, 
-             y=Housing_Increase))+
+       aes(x=average_energy_bill_2021, 
+           y=Housing_Increase))+
   geom_point() + #scatter plot
   geom_smooth(method = "lm", se=TRUE)+ #best fitting line
   labs(x= "average_energy_bill_2021",
@@ -154,8 +155,8 @@ anova(model_null, model1_scale)
 
 ### 3.2.1. Plot the relation -----------
 ggplot(data = Scot_data,
-         aes(x=Alcohol, 
-             y=Housing_Increase))+
+       aes(x=Alcohol, 
+           y=Housing_Increase))+
   geom_point() +
   geom_smooth(method = "lm", se=TRUE)+
   labs(x= "Alcohol Consumption",
@@ -189,9 +190,9 @@ summary(model2)
 ### 3.3.1. Plot the Relation -------------------
 # when dealing with a categorical predictor, it would make sense to use box plot instead of scatter plot.
 ggplot(data = Scot_data,
-         aes(x=location, 
-             y=Housing_Increase, 
-             fill=location))+
+       aes(x=location, 
+           y=Housing_Increase, 
+           fill=location))+
   geom_boxplot() + # boxplot
   geom_smooth(method = "lm", se=TRUE)+
   labs(x= "Location (Rural vs Urban)",
@@ -237,9 +238,9 @@ summary(model3)
 # We can have more than one predictor in a regression model.  
 
 # From the above we know that the increase of house price is significantly associated with alcohol consumption.
-# From Exercise 3, hopefully you have found that house price is also assiciated with SIMD, though only marginally significant.
+# From Exercise 3, hopefully you have found that house price is also associated with SIMD, though only marginally significant.
 # Let's see what happens if we include both alcohol and SIMD in the model.
-model5 <- lm(Housing_Increase ~ scale(Alcohol) + scale(SIMD) , data = Scot_data)
+model5 <- lm(Housing_Increase ~  scale(SIMD) + scale(Alcohol), data = Scot_data)
 summary(model5)
 
 # Now we see that if we include them both, neither factor remains significant.
@@ -276,9 +277,9 @@ ggplot(Scot_data, aes(x=average_rent_2022))+ geom_density(alpha=0.5,fill="red") 
 ggplot(Scot_data, aes(x=average_rent_2021))+ geom_density(alpha=0.5, fill="blue") +
   theme_bw()
 
-# Are them normalised? well...
+# Are the data normalised? well...
 # We can try with a non parametric test the Kolmogorov–Smirnov test
-ks.test(Scot_data$average_rent_2022,Scot_data$average_rent_2021)
+ks.test(Scot_data$average_rent_2021,Scot_data$average_rent_2022)
 
 # Is the result different?
 
@@ -295,7 +296,7 @@ Urban <- subset(authority_data_cleaned, location =='Urban')
 mean(Rural$FoodInsecurity)
 mean(Urban$FoodInsecurity)
 
-# Rural Food insecurity decreased while the urban food insecurity increase. The Null Hypothesis is that the Urban and Rural distinction is not a significant factor in this pattern. We can use a t.test to try and reject this Null Hypothesis.
+# Rural Food insecurity decreased while the urban food insecurity increased. The Null Hypothesis is that the Urban and Rural distinction is not a significant factor in this pattern. We can use a t.test to try and reject this Null Hypothesis.
 
 # Before that we need to check if they are normalised
 ggplot(authority_data_cleaned, aes(x=FoodInsecurity, fill=location))+ geom_density(alpha=0.5) +
@@ -307,10 +308,10 @@ two_sample_ttest <- t.test(Rural$FoodInsecurity, Urban$FoodInsecurity)
 
 print(two_sample_ttest) # So even if the means are very different Again, we cannot reject the Null Hypothesis.
 
-# what happen when we try use the KS test that is non parametric
+# What happens when we try use the KS test that is non parametric
 ks.test(Urban$FoodInsecurity,Rural$FoodInsecurity)
 
-# How the result differ from the t-test?
+# How do the results differ from the t-test?
 
 ### 4.1.3 Exercise 5------------------
 
@@ -324,7 +325,7 @@ ks.test(Urban$FoodInsecurity,Rural$FoodInsecurity)
 # We can use this figure as a 'mu' value to run a one sample t.test.
 mean(authority_data_cleaned$Rent) # Rent raise seems lower, but is this statistically significant?
 
-t.test(authority_data_cleaned$Rent, mu = 9.5) # With a p value below 0.05, the Null Hypothesis can be rejected, and it seems there is a significant difference between Scotland raise in rent and general UK one (note these are imperfect data, with the Scottish sample include the whole 2022).
+t.test(authority_data_cleaned$Rent, mu = 9.5) # With a p value below 0.05, the Null Hypothesis can be rejected, and it seems that there is a significant difference between increasing rent in Scotland and across the UK generally, with Scotland showing a smaller overall increase. You can think about why these results might be the case, possibly due to temporary rent freezes imposed by the Scottish Government? (note that these are imperfect data, with the Scottish sample including 2022).
 
 ## 4.3 ANOVA Tests ===================================
 # ANOVA tests can determine the impact of an independent variable on a quantitative dependent variable of a data set. 

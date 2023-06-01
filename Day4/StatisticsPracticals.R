@@ -23,8 +23,8 @@ summary_stats <- Scot_data %>%
 # Plot the relation
 # consider using geom_smooth() to superimpose the best-fitting line describing the association of interest
 ggplot(data = Scot_data,
-         aes(x=SIMD, 
-             y=Housing_Increase))+
+       aes(x=SIMD, 
+           y=Housing_Increase))+
   geom_point() +
   geom_smooth(method = "lm", se=TRUE)+
   labs(x= "SIMD",
@@ -35,8 +35,8 @@ ggplot(data = Scot_data,
 
 # (B) Can you try to fit a regression model using SIMD as a predictor and Housing_Increase as the outcome variable? 
 #Let's test this in a regression model. Fit a regression model including the continuous variable "SIMD" as a predictor, using lm() function.
-model4a <- lm (Housing_Increase ~ scale(SIMD), data = Scot_data)
-summary(model4a)
+model4 <- lm (Housing_Increase ~ scale(SIMD), data = Scot_data)
+summary(model4)
 
 # (C) Can you Interpret the results?
 # Model results suggest that SIMD is MARGINALLY significant. As SIMD increase by 1 unit, the increase of house price seems to increase by £2,951. However, this association is only marginally significant.
@@ -44,7 +44,7 @@ summary(model4a)
 ### 3.5.1. Exercise 4 --------------
 # Is the two-predictor model (SIMD + Alcohol) better than the one-predictor(SIMD only) model? 
 #Use anova() to compare the two-predictor model with the one-predictor model that including only SIMD as a predictor.
-anova (model4a, model5)
+anova (model4, model5)
 
 #Did the two-predictor model improve model fit?
 #Answer
@@ -57,7 +57,7 @@ mean(Rural$Homeless)
 mean(Urban$Homeless) # Urban journey times are shorter on average. Let's test the Null Hypothesis 
 one_sample_ttest <- t.test(Rural$Homeless, Urban$Homeless)
 
-print(one_sample_ttest) # In this case, we can see that the p value is = below 0.05, and so, the Null Hypothesis can be rejected, and we can conclude that there is a statistically significant impact on the raise of rents between urban and rural homeless applications. 
+print(one_sample_ttest) # In this case, we can see that the p value is = below 0.05, and so, the Null Hypothesis can be rejected, and we can conclude that there is a statistically significant difference between urban and rural homeless applications. 
 
 
 ### 4.3.2 Exercise 6 ----
@@ -65,4 +65,4 @@ print(one_sample_ttest) # In this case, we can see that the p value is = below 0
 
 summary(aov(Homeless ~ SIMDQuint + location + region, data = authority_data_cleaned))
 
-# Looking at this, the Null Hypothesis that the Urban-Rural divide have an impact on homeless applications. 
+# Looking at this, the Null Hypothesis that the Urban-Rural divide have an impact on homeless applications cn be rejected, but not so for deprivaion or region. 
