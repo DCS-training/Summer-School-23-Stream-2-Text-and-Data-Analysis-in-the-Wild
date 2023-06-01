@@ -161,19 +161,65 @@ data.frame(list(term = names(top_keys_SC), frequency = unname(top_keys_SC))) %>%
   theme(axis.text.x=element_text(angle=90, hjust=1))
 
 
+# Exercise 2 ==============
+# So far, we worked on the UK dataset. Let's have a look at the merged (UK+ Scotland) dataframe we created earlier in this lesson ("Merged_dataset")
 
-# 4. Sentiment-category analysis with syuzhet:-------------------------------------
-## 4.1. Getting Setup --------------
+#1 Extract the text column ------
+Merged_data_clean_text<-Merged_dataset$texts
+#2 Create a tm Corpus -----------------
+# Prepare the data for analysis, creating and cleaning a tm Corpus object:
+Merged_corpus <- VCorpus(VectorSource(Merged_data_clean_text))# transform our data set in a corpus
+Merged_corpus <- tm_map (Merged_corpus, content_transformer(tolower))# remove capitalised letters
+Merged_corpus <- tm_map (Merged_corpus, removePunctuation)# remove punctuation
+Merged_corpus <- tm_map (Merged_corpus, removeWords, stopwords('english')) # remove English stopwords
+Merged_corpus <- tm_map (Merged_corpus, removeWords, c('s', 't', '@\\w+', 'http.+ |http.+$','amp')) # remove specific words/symbols
+Merged_corpus <- tm_map (Merged_corpus, removeNumbers)# remove numbers
+Merged_corpus <- tm_map (Merged_corpus, stripWhitespace) # remove multiple white spaces
+
+#3 Create a term frequency matrix --------------
+lda_dtm_merged <- DocumentTermMatrix(uk_corpus)
+inspect(lda_dtm_merged) 
+
+lda_mx_merged <- as.matrix(lda_dtm_merged)
+term_freq_merged <- colSums(lda_mx_merged)
+term_freq_merged <- sort(term_freq_merged, decreasing=TRUE)
+term_freq_merged[0:30]
+
+#4 LDA topic modelling-------------------------------------
+# Create a matrix k 10
+#Create a matrix for LDA analsyis, defining the number of topics (k=5)
+merged_lda <- LDA(lda_dtm_merged, k=10, control=list(seed=1234))
+# Get topics and terms from the LDA analysis
+merged_lda_topics<-as.matrix(topics(merged_lda))
+merged_lda_terms <- as.matrix(terms(merged_lda,10))
+# Print the top 10 terms associated with each topic:
+merged_lda_terms[1:10,]
+
+
+# Repeat on cleaner dataset --------------
+# Let's remove some of the words appearing that aren't telling us much about the data, and re-run LDA:
+merged_corpus_2 <- tm_map (Merged_corpus, removeWords, c('will', 'can', 'cost', 'living', 'help', 'people', 'new', 'cma', 'million', 'across', 'new'))
+lda_dtm_merged_2 <- DocumentTermMatrix(merged_corpus_2)
+merged_lda_2 <- LDA(lda_dtm_merged_2, k=10, control=list(seed=1234))
+merged_lda_topics_2<-as.matrix(topics(merged_lda_2))
+merged_lda_terms_2 <- as.matrix(terms(merged_lda_2,10))
+# Print the top 10 terms associated with each topic:
+merged_lda_terms_2[1:10,]
+
+
+
+# Exercise 3 ====================
+# Sentiment-category analysis with syuzhet
+# Getting Setup 
 SentimentScotlandText <-SC_data_clean$texts # new object with the text of the articles
 
-## 4.2. Extract the sentiment scores -------------
+# Extract the sentiment scores 
 sentiment_scores_SC <- get_nrc_sentiment(SentimentScotlandText, lang="english")
 
 head(sentiment_scores_SC)# check content
 summary(sentiment_scores_SC)# Plot summary 
 
-
-## 4.3. Plot the sentiment category scores---------
+# Plot the sentiment category scores
 par(mar = c(5, 5, 4, 2) + 0.1) # define area graphs
 barplot(
   colSums(prop.table(sentiment_scores_SC[, 1:8])),
@@ -185,4 +231,4 @@ barplot(
   main = "Sentiment by Category: Scotland Data",
   xlab="category", ylab = 'frequency')
 
-# Exercise on 
+

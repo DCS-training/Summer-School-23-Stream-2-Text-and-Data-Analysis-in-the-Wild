@@ -6,8 +6,8 @@
 
 
 # PART 2: TOPIC MODELLING ###########
-# Setting up ===================
-# Libraries needed
+# 1. Setting up ===================
+## 1.1. Libraries needed -----------
 install.packages("quanteda.textstats")
 install.packages("syuzhet")
 library(quanteda)
@@ -20,16 +20,18 @@ library(topicmodels)
 library(syuzhet)
 library(RColorBrewer)
 
-# Load the data:
+## 1.2. Load the data------------
 uk_data <- read_csv("Day1/WebScraping/outputs/UKNews.csv")
 SC_data <- read_csv("Day1/WebScraping/outputs/ScotlandNews.csv")
-# Drop the first column that we do not need:
+## 1.3. Drop the first column that we do not need---------
 uk_data<-uk_data[, 2:4]
 SC_data<-SC_data[, 2:4]
-# Examine the data:
+## 1.4. Examine the data -----------
 summary(uk_data)
 summary(SC_data)
-# Clean the data: change all text to strings; remove characters associated with line breaks, replacing them with a space:
+# 2. Clean the data ============
+## 2.1. Clean the Uk data ----------
+#change all text to strings; remove characters associated with line breaks, replacing them with a space:
 uk_data_clean <- mutate_if(uk_data, 
                            is.character, 
                            str_replace_all, 
@@ -41,6 +43,8 @@ SC_data_clean <- mutate_if(SC_data,
                            str_replace_all, 
                            pattern ="\r?\n|\r", #Searching for
                              replacement = " ")
+
+## 2.2. Clean the Scotland data-------
 # This will come handy afterwards but let's have a new data set that will merge Scotland and UK 
 # First all need to rename UK columns and reorder them
 ForMergingUK<-uk_data_clean %>% 
@@ -50,11 +54,13 @@ ForMergingUK<-uk_data_clean %>%
 
 Merged_dataset <- rbind(ForMergingUK, SC_data_clean)
 
+## 2.3. Extract the text column ------
 # We'll work with the UK data first, and then you'll repeat the process with the Scotland data on your own later in this block.
 # Subset the text column and save it as an object:
 uk_data_clean_text<-uk_data_clean$clean_text
 
-# Prepare the data for analysis, creating and clenaing a tm Corpus object:
+## 2.4. Create a tm Corpus -----------------
+# Prepare the data for analysis, creating and cleaning a tm Corpus object:
 uk_corpus <- VCorpus(VectorSource(uk_data_clean_text))# transform our data set in a corpus
 uk_corpus <- tm_map (uk_corpus, content_transformer(tolower))# remove capitalised letters
 uk_corpus <- tm_map (uk_corpus, removePunctuation)# remove punctuation
@@ -63,22 +69,25 @@ uk_corpus <- tm_map (uk_corpus, removeWords, c('s', 't', '@\\w+', 'http.+ |http.
 uk_corpus <- tm_map (uk_corpus, removeNumbers)# remove numbers
 uk_corpus <- tm_map (uk_corpus, stripWhitespace) # remove multiple white spaces
 
-# Topic Modelling=================================
-# Create a document term matrix (dtm) of the corpus.
+# 3. Topic Modelling=================================
+## 3.1. Create a document term matrix (dtm) of the corpus------
 # A DTM is a mathematical matrix that describes the frequency of terms that occur in a collection of documents.  
 # Rows correspond to documents in the collection and columns correspond to terms.
 lda_dtm_uk <- DocumentTermMatrix(uk_corpus)
 inspect(lda_dtm_uk) 
 
+## 3.2. Explore Frequency ----------
 # Print the terms in the data set that appear at least 100 times
 findFreqTerms(lda_dtm_uk, 100) 
 
+## 3.3. Explore association with Scotland and England -----------
 # Print the terms associated with the keyword that have a correlation coefficient of >= 0.4:
 # (A correlation coefficient shows the strength of the relationship between two items on a scale of -1 to 1)
 findAssocs(lda_dtm_uk, "england", .4)
 findAssocs(lda_dtm_uk, "scotland", .4)
 # Later on, we will compare the results after performing the same analysis on the UK dataset.
 
+### 3.3.1 Getting the full list of association -------
 # We want to select top of one and lower other
 # Create a new object containing our results
 AssociationEngland<-data.frame(findAssocs(lda_dtm_uk, "england", .01))
@@ -102,23 +111,24 @@ Extreme<-subset(Merged_datasets, Comparison!="Communal")
 # Now I need to have one single value for each
 Extreme$Value<-ifelse(Extreme$Comparison == "VeryScottish", Extreme$ValueScotland, Extreme$ValueEngland)
 
-# Visualise our results
+### 3.3.2. Visualise our results ---------------
 ggplot(Extreme, aes(y=Term, x=Value, colour=Comparison))+
   geom_point(size=5)+
   theme_bw()
 # What can we see in the graph? 
 
-# Create a term frequency matrix
+## 3.4. Create a term frequency matrix --------------
 lda_mx_uk <- as.matrix(lda_dtm_uk)
 term_freq_uk <- colSums(lda_mx_uk)
 term_freq_uk <- sort(term_freq_uk, decreasing=TRUE)
 term_freq_uk[0:30]
 
 
-# LDA topic modelling:-------------------------------------
+## 3.5. LDA topic modelling-------------------------------------
+### 3.5.1. Create a matrix k 5--------------
 #Create a matrix for LDA analsyis, defining the number of topics (k=5)
 uk_lda <- LDA(lda_dtm_uk, k=5, control=list(seed=1234))
-#Get topics and terms from the LDA analysis
+# Get topics and terms from the LDA analysis
 uk_lda_topics<-as.matrix(topics(uk_lda))
 uk_lda_terms <- as.matrix(terms(uk_lda,10))
 # Print the top 10 terms associated with each topic:
@@ -126,16 +136,18 @@ uk_lda_terms[1:10,]
 
 # Have a look at the output and discuss your thoughts with your table.
 
+### 3.5.2. Create a matrix k 10--------------
 # Let's try the LDA again, expanding the number of topics to 10
 uk_lda <- LDA(lda_dtm_uk, k=10, control=list(seed=1234))
 uk_lda_topics<-as.matrix(topics(uk_lda))
 uk_lda_terms <- as.matrix(terms(uk_lda,10))
 uk_lda_terms[1:10,]
 
-#What can we observe about the effect of adding more topics? 
-#With your table, come up with a label for each topic.  What can we learn about our data using LDA? 
+# What can we observe about the effect of adding more topics? 
+# With your table, come up with a label for each topic.  What can we learn about our data using LDA? 
 
-#Let's remove some of the words appearing that aren't telling us much about the data, and re-run LDA:
+### 3.5.3. Repeat on cleaner dataset --------------
+# Let's remove some of the words appearing that aren't telling us much about the data, and re-run LDA:
 uk_corpus_2 <- tm_map (uk_corpus, removeWords, c('will', 'can', 'cost', 'living', 'help', 'people', 'new', 'cma', 'million'))
 lda_dtm_uk_2 <- DocumentTermMatrix(uk_corpus_2)
 uk_lda_2 <- LDA(lda_dtm_uk_2, k=5, control=list(seed=1234))
@@ -146,6 +158,7 @@ uk_lda_terms_2[1:10,]
 
 # Discuss the results with your table. From a human perspective, did removing extra words improve the topic modelling analysis?
 
+# Exercise 2 ========
 # So far, we worked on the UK dataset. Let's have a look at the merged (UK+ Scotland) dataframe we created earlier in this lesson ("Merged_dataset")
 
 # Sentiment-category analysis with syuzhet:-------------------------------------
@@ -168,7 +181,7 @@ barplot(
   main = "Sentiment by Category: Scotland Data",
   xlab="category", ylab = 'frequency')
 
-# Exercise 1: Topic Modelling + Sentiment Categorisation using the Scotland news dataset  =============
+# Exercise 3: Topic Modelling + Sentiment Categorisation using the Scotland news dataset  =============
 #With your table, repeat this analysis for the UK data set. What can you conclude about sentiment categorisation?
 
 #Wrap-up discussion:
