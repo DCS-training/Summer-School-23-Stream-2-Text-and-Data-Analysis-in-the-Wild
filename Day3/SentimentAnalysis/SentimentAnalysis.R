@@ -5,12 +5,15 @@
 
 # 1. Getting Setup ====================
 ## 1.1. Libraries needed--------------
+install.packages("syuzhet")
+install.packages("vader")
+install.packages("wordcloud")
+install.packages("tm")
 library(syuzhet)
 library(vader)
 library(tidyverse)
 library(wordcloud)
 library(tm)
-
 
 # 2. Overall sentiment (Scotland vs. UK)===================
 ## 2.1. Import data -------------------
@@ -73,7 +76,7 @@ ggplot(FullDataSet, aes(x=dataset,y=Sentiment, fill=dataset) )+
 # 3. Sentiment scores by date ========
 ## 3.1. Data Cleaning -----------
 ### 3.1.1. Standardise date format + remove time stamp 
-# On the Scotland Data set -----------
+# On the Scotland Data set 
 SentimentScotland$Date <- as.Date(as.POSIXct(SentimentScotland$created_utc, 'GMT'))
 
 SentimentScotland$MonthYear <- format(as.Date(SentimentScotland$Date, format="%Y-%m-%d"),"%Y-%m")  
@@ -155,7 +158,7 @@ Scotland23<-Scotland %>%
   filter(str_detect(date, "2023"))
 
 
-#Plot the 2023 posts:
+## 4.2. Plot the 2023 posts ---------------
 # Define my gradient 
 gradient <- colorRampPalette(c("red", "green"))
 ggplot(Scotland23, aes(x = date, y =Sentiment, colour=Sentiment)) +
@@ -165,7 +168,8 @@ ggplot(Scotland23, aes(x = date, y =Sentiment, colour=Sentiment)) +
   theme_minimal()+
   geom_hline(yintercept=0, linetype='dotted')
 
-#With your table, create a plot for a subset of your choice (e.g. r/UK posts from 2022, r/Scotland posts with compound >=0.5, etc). Discuss your findings
+## 4.2.Exercise 1 --------------------
+# With your table, create a plot for a subset of your choice (e.g. r/UK posts from 2022, r/Scotland posts with compound >=0.5, etc). Discuss your findings
 #Then, share your plot with the class.
 
 # 5. Compare the top positive and negative posts ====
