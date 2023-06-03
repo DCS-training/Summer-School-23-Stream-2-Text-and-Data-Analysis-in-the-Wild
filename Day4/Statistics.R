@@ -5,6 +5,9 @@
 # RQ2. Is the increase of house price associated with Alcohol Consumption?
 # RQ3. Is the increase of house price associated with Location (Rural vs Urban)?
 # RQ4. Is Deprivation (measured as SIMD) associated with increase of house price?
+# RQ5. How statistically significant is the rent increase across Scotland?
+# RQ6. What factors are most associated with deprivation and rent increases?
+
 
 # 1. Getting Set ###########
 ## 1.1. Packages we need ==========
