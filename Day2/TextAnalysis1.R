@@ -133,7 +133,7 @@ textplot_wordcloud(dfm_nostop, rotation = 0.25,
 
 # What observations do we have?
 
-## 7.3. Remove Costum Stopwords --------------------
+## 7.3. Remove Custom Stopwords --------------------
 # We can also create a custom list of words to remove from the corpus
 
 customstopwords <- c("cost", "living", "will")#removed keywords that aren't telling us much or that skew the results
